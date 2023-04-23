@@ -1,142 +1,589 @@
 export const hospitals = [
     {
-        "id": 1,
-        "name": "Thiruvananthapuram Medical College Casualty",
-        "coordinates": "8.5235626173231, 76.92779843082823"
+        "id": "1",
+        "Name": "Thiruvananthapuram Medical College Casualty",
+        "Latitude": "8.5235626173231",
+        "Longitude": "76.92779843082823",
+        "services": [
+            "Anesthatiology",
+            "cardio thorastic surgery",
+            "Casuality",
+            "Community Medicine",
+            "Dermatology",
+            "Derntal",
+            "Endocrinology",
+            "ENT",
+            "Gastro enterology",
+            "General Medicine",
+            "General surgery",
+            "infectious deseases",
+            "Internal Medicine Neuro Surgery",
+            "neurology",
+            "Nuclear Medicine",
+            "Obstetrics and Gynaechology",
+            "Oncology",
+            "Ophathalmology",
+            "Orthopedics",
+            "Pathology",
+            "pediatric cardiology",
+            "Pediatric Nephrology",
+            "pediatric neurology",
+            "pediatric surgery",
+            "pediatrics",
+            "pharamacology",
+            "Physical Medicine & Rehab",
+            "Physiotherapy",
+            "plastic and reconstructive surgery",
+            "Psychology",
+            "pulmonory Medicine",
+            "radio dyagonosis",
+            "Radio Therapy",
+            "Surgical Gastro",
+            "Transfusion Medicine",
+            "Urology",
+            "X-ray"
+        ]
     },
     {
-        "id": 2,
-        "name": "Providence Endocrine & Diabetes Specialty Centre",
-        "coordinates": "8.531637201099311, 76.92073445398033"
+        "id": "2",
+        "Name": "Providence Endocrine & Diabetes Specialty Centre",
+        "Latitude": "8.531637201099311",
+        "Longitude": "76.92073445398033",
+        "services": [
+            "Diabetology",
+            "Diabetic Dentistry",
+            "Endocrinology",
+            "Laboratory",
+            "Nutrition and Diet Clinic",
+            "Pediatric Entocrinology",
+            "Thyroid"
+        ]
     },
     {
-        "id": 3,
-        "name": "Arthro care",
-        "coordinates": "8.553169386631982, 76.9168770241366"
+        "id": "3",
+        "Name": "Arthro care",
+        "Latitude": "8.553169386631982",
+        "Longitude": "76.9168770241366",
+        "services": [
+            "Physiotherapy",
+            "Psychology"
+        ]
     },
     {
-        "id": 4,
-        "name": "AJ Hospital",
-        "coordinates": "8.568460264171739, 76.8728721511262"
+        "id": "4",
+        "Name": "AJ Hospital",
+        "Latitude": "8.568460264171739",
+        "Longitude": "76.8728721511262",
+        "services": [
+            "Anesthatiology",
+            "Cardiology",
+            "Casuality",
+            "Dermatology",
+            "Derntal",
+            "ENT",
+            "General Medicine",
+            "General surgery",
+            "Neonatology",
+            "Nephrology",
+            "neurology",
+            "Obstetrics and Gynaechology",
+            "Ophathalmology",
+            "Orthopedics",
+            "pediatrics",
+            "Physiotherapy",
+            "Psychology",
+            "pulmonory Medicine",
+            "Radiology",
+            "Sonology",
+            "Urology",
+            "X-ray"
+        ]
     },
     {
-        "id": 5,
-        "name": "PHC Ulloor",
-        "coordinates": "8.545689695701508, 76.90785151064188"
+        "id": "5",
+        "Name": "PHC Ulloor",
+        "Latitude": "8.545689695701508",
+        "Longitude": "76.90785151064188",
+        "services": [
+            "General Medicine"
+        ]
     },
     {
-        "id": 6,
-        "name": "KJK Hospital and Fertility Research Centre ",
-        "coordinates": "8.541649062002989, 76.93930896646637"
+        "id": "6",
+        "Name": "KJK Hospital and Fertility Research Centre ",
+        "Latitude": "8.541649062002989",
+        "Longitude": "76.93930896646637",
+        "services": [
+            "Endoscopy & Reproductive Medicine",
+            "Neonatology",
+            "Obstetrics and Gynaechology",
+            "pediatrics",
+            "X-ray"
+        ]
     },
     {
-        "id": 7,
-        "name": "IMB Hospital",
-        "coordinates": "8.557553072705618, 76.91600709530162"
+        "id": "7",
+        "Name": "IMB Hospital",
+        "Latitude": "8.557553072705618",
+        "Longitude": "76.91600709530162",
+        "services": [
+            "Casuality",
+            "Counciling",
+            "De-Addiction",
+            "ENT",
+            "General Medicine",
+            "I Q Assessment",
+            "Laboratory",
+            "Learning Disability",
+            "Oncology",
+            "Orthopedics",
+            "pediatrics",
+            "Psychology",
+            "Radiology",
+            "X-ray"
+        ]
     },
     {
-        "id": 8,
-        "name": "Chest Diseases Hospital",
-        "coordinates": "8.519957681977754, 76.91425592546955"
+        "id": "8",
+        "Name": "Chest Diseases Hospital",
+        "Latitude": "8.519957681977754",
+        "Longitude": "76.91425592546955",
+        "services": [
+            "pulmonory Medicine"
+        ]
     },
     {
-        "id": 9,
-        "name": "Station Medicare Centre, S.M.C",
-        "coordinates": "8.518760460117843, 76.9111570953011"
+        "id": "9",
+        "Name": "Station Medicare Centre, S.M.C",
+        "Latitude": "8.518760460117843",
+        "Longitude": "76.9111570953011",
+        "services": [
+            "Anesthatiology",
+            "Cardiology",
+            "Casuality",
+            "Community Medicione",
+            "Dermatology",
+            "Derntal",
+            "ENT",
+            "Family And Community Medicine",
+            "Gastro enterology",
+            "General Medicine",
+            "General surgery",
+            "Nephrology",
+            "Neuo Surgery",
+            "neurology",
+            "Obstetrics and Gynaechology",
+            "Ophathalmology",
+            "Orthopedics",
+            "pediatric surgery",
+            "pediatrics",
+            "Psychology",
+            "pulmonory Medicine",
+            "Radiology"
+        ]
     },
     {
-        "id": 10,
-        "name": "KIMS Hospital",
-        "coordinates": "8.514124483422494, 76.90953551906179"
+        "id": "10",
+        "Name": "KIMS Hospital",
+        "Latitude": "8.514124483422494",
+        "Longitude": "76.90953551906179",
+        "services": [
+            "Anesthatiology",
+            "Ayurvedha",
+            "cardio thorastic surgery",
+            "Cardiology",
+            "Casuality",
+            "Cosmetology",
+            "Counciling",
+            "Dermatology",
+            "Derntal",
+            "Diabetology",
+            "Endocrinology",
+            "ENT",
+            "Family And Community Medicine",
+            "Fertility Clinic",
+            "Gastro enterology",
+            "Gastro intestinal Surgery",
+            "infectious deseases",
+            "Internal Medicine Neuro Surgery",
+            "Laboratory",
+            "Liver Deseases",
+            "Neonatology",
+            "Nephrology",
+            "Neuo Surgery",
+            "neurology",
+            "Nuclear Medicine",
+            "Nutrition and Diet Clinic",
+            "Obstetrics and Gynaechology",
+            "Oncology",
+            "Ophathalmology",
+            "Orthopedics",
+            "pancreatic Deseases",
+            "pediatric cardiology",
+            "Pediatric Entocrinology",
+            "pediatric neurology",
+            "pediatric surgery",
+            "pediatric urology",
+            "pediatrics",
+            "Physical Medicine & Rehab",
+            "plastic and reconstructive surgery",
+            "Psychology",
+            "pulmonory Medicine",
+            "Radiology",
+            "Urology",
+            "Vocal and Voice"
+        ]
     },
     {
-        "id": 11,
-        "name": "Anugraham Neurocare",
-        "coordinates": "8.515155159821315, 76.93520226646604"
+        "id": "11",
+        "Name": "Anugraham Neurocare",
+        "Latitude": "8.515155159821315",
+        "Longitude": "76.93520226646604",
+        "services": [
+            "neurology",
+            "Pitutory deseases"
+        ]
     },
     {
-        "id": 12,
-        "name": "Janata Clinic",
-        "coordinates": "8.543145147473512, 76.88653251709788"
+        "id": "12",
+        "Name": "Janata Clinic",
+        "Latitude": "8.543145147473512",
+        "Longitude": "76.88653251709788",
+        "services": [
+            "General Medicine"
+        ]
     },
     {
-        "id": 13,
-        "name": "Cosmopolitan Hospital",
-        "coordinates": "8.515576927451734, 76.9355663404844"
+        "id": "13",
+        "Name": "Cosmopolitan Hospital",
+        "Latitude": "8.515576927451734",
+        "Longitude": "76.9355663404844",
+        "services": [
+            "Anesthatiology",
+            "cardio thorastic surgery",
+            "Cardiology",
+            "Casuality",
+            "Dermatology",
+            "Derntal",
+            "ENT",
+            "Gastro enterology",
+            "General Medicine",
+            "General surgery",
+            "Laboratory",
+            "Neonatology",
+            "Nephrology",
+            "Neuo Surgery",
+            "neurology",
+            "Obstetrics and Gynaechology",
+            "Oncology",
+            "Ophathalmology",
+            "Orthopedics",
+            "pediatric neurology",
+            "pediatric surgery",
+            "pediatrics",
+            "Physical Medicine & Rehab",
+            "plastic and reconstructive surgery",
+            "Psychology",
+            "pulmonory Medicine",
+            "radio dyagonosis",
+            "Surgical Gastro",
+            "Urology"
+        ]
     },
     {
-        "id": 14,
-        "name": "Bethesda Medi Clinic",
-        "coordinates": "8.58216156415073, 76.92206527844552"
+        "id": "14",
+        "Name": "Bethesda Medi Clinic",
+        "Latitude": "8.58216156415073",
+        "Longitude": "76.92206527844552",
+        "services": [
+            "Casuality",
+            "Laboratory"
+        ]
     },
     {
-        "id": 15,
-        "name": "Sree Avittam Thirunal Hospital (SAT)",
-        "coordinates": "8.522899328238896, 76.92476702699017"
+        "id": "15",
+        "Name": "Sree Avittam Thirunal Hospital (SAT)",
+        "Latitude": "8.522899328238896",
+        "Longitude": "76.92476702699017",
+        "services": [
+            "Laboratory",
+            "pediatric cardiology",
+            "Pediatric Entocrinology",
+            "Pediatric Nephrology",
+            "pediatric neurology",
+            "pediatric surgery",
+            "pediatric urology",
+            "pediatrics"
+        ]
     },
     {
-        "id": 16,
-        "name": "Jubilee Memorial Hospital",
-        "coordinates": "8.501983847806349, 76.95231716646585"
+        "id": "16",
+        "Name": "Jubilee Memorial Hospital",
+        "Latitude": "8.501983847806349",
+        "Longitude": "76.95231716646585",
+        "services": [
+            "Casuality",
+            "Laboratory",
+            "Pathology",
+            "Physiotherapy",
+            "Radiology"
+        ]
     },
     {
-        "id": 17,
-        "name": "Meditrina Hospital",
-        "coordinates": "8.515435049284127, 76.94430206646601"
+        "id": "17",
+        "Name": "Meditrina Hospital",
+        "Latitude": "8.515435049284127",
+        "Longitude": "76.94430206646601",
+        "services": [
+            "Anesthatiology",
+            "Cardiology",
+            "Dermatology",
+            "Derntal",
+            "Diabetology",
+            "ENT",
+            "General Medicine",
+            "General surgery",
+            "neurology",
+            "Obstetrics and Gynaechology",
+            "Orthopedics",
+            "pediatrics",
+            "Physical Medicine & Rehab",
+            "Psychology",
+            "Urology"
+        ]
     },
     {
-        "id": 18,
-        "name": "T.M. Medical Centre",
-        "coordinates": "8.540779444522087, 76.88017924613114"
+        "id": "18",
+        "Name": "T.M. Medical Centre",
+        "Latitude": "8.540779444522087",
+        "Longitude": "76.88017924613114",
+        "services": [
+            "Fertility Clinic"
+        ]
     },
     {
-        "id": 19,
-        "name": "Indian Institute of Diabetes",
-        "coordinates": "8.520277754180333, 76.9115433333646"
+        "id": "19",
+        "Name": "Indian Institute of Diabetes",
+        "Latitude": "8.520277754180333",
+        "Longitude": "76.9115433333646",
+        "services": [
+            "Diabetology",
+            "Diabetic Dentistry",
+            "Endocrinology",
+            "Ophathalmology",
+            "Physical Medicine & Rehab",
+            "Thyroid"
+        ]
     },
     {
-        "id": 20,
-        "name": "SCT Institute for Medical Sciences & Technology",
-        "coordinates": "8.521135596326664, 76.9263969602194"
+        "id": "20",
+        "Name": "SCT Institute for Medical Sciences & Technology",
+        "Latitude": "8.521135596326664",
+        "Longitude": "76.9263969602194",
+        "services": [
+            "Anesthatiology",
+            "cardio thorastic surgery",
+            "Cardiology",
+            "Casuality",
+            "Neuo Surgery",
+            "neurology",
+            "Pathology",
+            "pediatric cardiology",
+            "pediatric neurology",
+            "Physical Medicine & Rehab",
+            "Transfusion Medicine"
+        ]
     },
     {
-        "id": 21,
-        "name": "Pangappara PHC",
-        "coordinates": "8.557487731966711, 76.90342844048767"
+        "id": "21",
+        "Name": "Pangappara PHC",
+        "Latitude": "8.557487731966711",
+        "Longitude": "76.90342844048767",
+        "services": [
+            "Dermatology",
+            "ENT",
+            "General Medicine",
+            "Laboratory",
+            "Ophathalmology",
+            "Psychology"
+        ]
     },
     {
-        "id": 22,
-        "name": "GG Hospital",
-        "coordinates": "8.515784145453573, 76.9332936597226"
+        "id": "22",
+        "Name": "GG Hospital",
+        "Latitude": "8.515784145453573",
+        "Longitude": "76.9332936597226",
+        "services": [
+            "Anesthatiology",
+            "cardio thorastic surgery",
+            "Cardiology",
+            "Casuality",
+            "Dermatology",
+            "Derntal",
+            "Endocrinology",
+            "ENT",
+            "Gastro enterology",
+            "General Medicine",
+            "General surgery",
+            "Laboratory",
+            "Liver Deseases",
+            "Neonatology",
+            "Nephrology",
+            "Neuo Surgery",
+            "neurology",
+            "Nutrition and Diet Clinic",
+            "Obstetrics and Gynaechology",
+            "Oncology",
+            "Ophathalmology",
+            "Orthopedics",
+            "pediatric surgery",
+            "pediatrics",
+            "Physiotherapy",
+            "plastic and reconstructive surgery",
+            "Psychology",
+            "pulmonory Medicine",
+            "radio dyagonosis",
+            "Radiology",
+            "Urology"
+        ]
     },
     {
-        "id": 23,
-        "name": "Lords Hospital",
-        "coordinates": "8.507128807594025, 76.91072526952098"
+        "id": "23",
+        "Name": "Lords Hospital",
+        "Latitude": "8.507128807594025",
+        "Longitude": "76.91072526952098",
+        "services": [
+            "Anesthatiology",
+            "Cardiology",
+            "Casuality",
+            "Endocrinology",
+            "ENT",
+            "Gastro enterology",
+            "General Medicine",
+            "Neonatology",
+            "Nephrology",
+            "Nutrition and Diet Clinic",
+            "Obstetrics and Gynaechology",
+            "Oncology",
+            "Orthopedics",
+            "pediatric surgery",
+            "pediatrics",
+            "Physical Medicine & Rehab",
+            "plastic and reconstructive surgery",
+            "pulmonory Medicine",
+            "Radiology",
+            "Urology"
+        ]
     },
     {
-        "id": 24,
-        "name": "Credence Hospital",
-        "coordinates": "8.528894974805247, 76.93121345398117"
+        "id": "24",
+        "Name": "Credence Hospital",
+        "Latitude": "8.528894974805247",
+        "Longitude": "76.93121345398117",
+        "services": [
+            "Anesthatiology",
+            "Cardiology",
+            "Casuality",
+            "Cosmetology",
+            "Dermatology",
+            "Diabetology",
+            "Endocrinology",
+            "ENT",
+            "Fertility Clinic",
+            "Gastro enterology",
+            "Gastro intestinal Surgery",
+            "General Medicine",
+            "General surgery",
+            "Neonatology",
+            "Obstetrics and Gynaechology",
+            "Orthopedics",
+            "pediatric surgery",
+            "pediatrics",
+            "plastic and reconstructive surgery",
+            "Psychology",
+            "pulmonory Medicine",
+            "Radiology",
+            "Urology"
+        ]
     },
     {
-        "id": 25,
-        "name": "Medcare Health Centre",
-        "coordinates": "8.5473164527959, 76.91687238180678"
+        "id": "25",
+        "Name": "Medcare Health Centre",
+        "Latitude": "8.5473164527959",
+        "Longitude": "76.91687238180678",
+        "services": [
+            "Casuality",
+            "Dermatology",
+            "ENT",
+            "General Medicine",
+            "Obstetrics and Gynaechology",
+            "Orthopedics",
+            "pediatrics",
+            "Psychology",
+            "pulmonory Medicine"
+        ]
     },
     {
-        "id": 26,
-        "name": "TSC Hospital Kazhakootam",
-        "coordinates": "8.539927478257573, 76.8785269221894"
+        "id": "26",
+        "Name": "TSC Hospital Kazhakootam",
+        "Latitude": "8.539927478257573",
+        "Longitude": "76.8785269221894",
+        "services": [
+            "Anesthatiology",
+            "Cardiology",
+            "Dermatology",
+            "ENT",
+            "General Medicine",
+            "General surgery",
+            "Obstetrics and Gynaechology",
+            "Orthopedics",
+            "pediatrics",
+            "Physiotherapy",
+            "plastic and reconstructive surgery",
+            "Urology"
+        ]
     },
     {
-        "id": 27,
-        "name": "CSI Mission Hospital",
-        "coordinates": "8.574595515551112, 76.86857053380736"
+        "id": "27",
+        "Name": "CSI Mission Hospital",
+        "Latitude": "8.574595515551112",
+        "Longitude": "76.86857053380736",
+        "services": [
+            "Anesthatiology",
+            "Cardiology",
+            "Casuality",
+            "Dermatology",
+            "Derntal",
+            "ENT",
+            "General Medicine",
+            "General surgery",
+            "Nephrology",
+            "Obstetrics and Gynaechology",
+            "Ophathalmology",
+            "Orthopedics",
+            "pediatrics",
+            "Psychology",
+            "Radiology",
+            "Urology"
+        ]
     },
     {
-        "id": 28,
-        "name": "General Hospital ",
-        "coordinates": "8.499618417550836, 76.9429911859288"
+        "id": "28",
+        "Name": "General Hospital ",
+        "Latitude": "8.499618417550836",
+        "Longitude": "76.9429911859288",
+        "services": [
+            "Anesthatiology",
+            "Cardiology",
+            "Casuality",
+            "Community Medicine",
+            "Counciling",
+            "Diabetology",
+            "ENT",
+            "General Medicine",
+            "Laboratory",
+            "Ophathalmology",
+            "pediatrics"
+        ]
     }
 ]

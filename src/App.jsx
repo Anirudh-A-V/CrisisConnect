@@ -6,7 +6,7 @@ import MapboxDirections from "@mapbox/mapbox-gl-directions/dist/mapbox-gl-direct
 import 'mapbox-gl/dist/mapbox-gl.css';
 import "@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions.css";
 
-import marker_svg from './Assets/marker.svg';
+// import { hospitals } from './Data/location.js';
 
 mapboxgl.accessToken = 'pk.eyJ1IjoiYW5pcnVkaGF2MDIiLCJhIjoiY2xncDR0cGI1MGJubDNyc3UwcHhhd3BsayJ9.mqNU3ZXIGHnS5PifEDrUtQ';
 
@@ -137,10 +137,11 @@ function App() {
     fetch(`https://api.mapbox.com/directions/v5/mapbox/driving/${longitude},${latitude};${selectedHospital.center[0]},${selectedHospital.center[1]}?access_token=${mapboxgl.accessToken}`)
       .then((response) => response.json())
       .then((data) => {
+        console.log(data)
         console.log(data.routes[0].geometry);
         console.log('Creating new directions control')
 
-        
+
         const directions = new MapboxDirections({
           accessToken: mapboxgl.accessToken,
           unit: 'metric',
@@ -158,7 +159,7 @@ function App() {
       })
       .catch((err) => console.log(err));
 
-    
+
     return () => {
       if (map.getSource('route')) {
         map.removeLayer('route');
@@ -172,18 +173,35 @@ function App() {
 
   return (
     <div>
-      <div ref={mapContainer} className="map-container" />
+      <h1 className='text-3xl font-bold text-center mt-10'>Hospital Locator</h1>
+      {
+        longitude === 0 && latitude === 0 && mapContainer === null ? (
+          <div className='flex flex-col justify-center items-center h-screen'>
+            <p className='font-normal text-xl'>Loading...</p>
+          </div>
+        ) : (
+          <div className='flex flex-col justify-start mt-5 items-center h-full'>
+            <div className='flex flex-row justify-center items-center w-full'>
+              <div ref={mapContainer} className='map-container w-4/5' />
+            </div>
+          </div>
+        )
+      }
       {hospitals && hospitals.length > 0 && (
         <div className='Hospital-List'>
-        {/* <h2>Hospitals</h2> */}
-        <div>
-          {hospitals.map((hospital) => (
-            <div key={hospital.id} onClick={() => setSelectedHospital(hospital)}>
-              <p>{hospital.text}</p>
-            </div>
-          ))}
+          <h1 className='text-2xl font-bold text-center mt-10'>Hospitals</h1>
+          <div className='flex flex-col justify-center items-center'>
+            {hospitals.map((hospital) => (
+              <div key={hospital.id} onClick={() => setSelectedHospital(hospital)} className='flex justify-center flex-col h-7 w-4/5 p-6 m-1 bg-slate-50 rounded-md cursor-pointer'>
+                <p className='font-normal text-base'>{hospital.text}</p>
+                {/* <div className='flex flex-row'>
+                  <p className='font-normal text-sm mr-2'>{hospital.Latitude}</p>
+                  <p className='font-normal text-sm'>{hospital.Longitude}</p>
+                </div> */}
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
       )}
     </div>
   );
