@@ -1,4 +1,4 @@
-export const hospitals = [
+const hospitals = [
     {
         "id": "1",
         "Name": "Thiruvananthapuram Medical College Casualty",
@@ -587,3 +587,5 @@ export const hospitals = [
         ]
     }
 ]
+
+export default hospitals;
