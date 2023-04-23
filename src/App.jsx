@@ -128,7 +128,7 @@ function App() {
 
     marker.current = new mapboxgl.Marker().setLngLat([longitude, latitude]).addTo(map);
 
-  }, []);
+  }, [latitude, longitude]);
 
 
   useEffect(() => {
