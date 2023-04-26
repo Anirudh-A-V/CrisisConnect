@@ -61,7 +61,7 @@ function Map() {
             console.log(distance);
             hospital.distance = distance;
             return hospital;
-          });
+        });
 
 
         setHospitals(sortedData.slice(0, 7))
