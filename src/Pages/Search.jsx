@@ -127,7 +127,7 @@ const Search = () => {
                                 return (
                                     <div key={index} className='bg-white shadow-md rounded-lg overflow-hidden w-2/3 m-4 h-fit' role='button'
                                         onClick={() => {
-                                            navigate(`/hospital/${hospital.Latitude}%${hospital.Longitude}`)
+                                            navigate(`/search/${hospital.Latitude}/${hospital.Longitude}`)
                                         }}>
                                         <div className='px-4 py-2'>
                                             <h1 className='text-xl font-bold text-gray-800'>{hospital.Name}</h1>
