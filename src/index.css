@@ -91,3 +91,8 @@ button:focus-visible {
   margin: 12px;
   border-radius: 4px;
 }
+
+* {
+  box-sizing: border-box;
+  /* border: #ff0000 solid 1px !important; */
+}

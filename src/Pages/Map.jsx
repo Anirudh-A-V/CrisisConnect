@@ -187,6 +187,8 @@ function Map() {
     }, [latitude, longitude]);
 
     useEffect(() => {
+        if (hospitals.length === 0) return; // wait for hospitals to be loaded
+        
         hospitals.forEach((hospital) => {
             console.log('Adding markers to map')
             const marker = new mapboxgl.Marker({ color: '#FF0000' })
