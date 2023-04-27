@@ -20,8 +20,6 @@ const FullMap = () => {
     const [longitude, setLongitude] = useState(0);
     const [latitude, setLatitude] = useState(0);
     const [zoom, setZoom] = useState(15);
-    const [hospitals, setHospitals] = useState([]);
-    const [hospitalData, setHospitalData] = useState(null);
     const [selectedHospital, setSelectedHospital] = useState(null);
     const [map, setMap] = useState(null);
 
@@ -29,7 +27,7 @@ const FullMap = () => {
     console.log('lat: ', lat);
     console.log('lon: ', lon);
 
-
+    console.log("Hi");
     useEffect(() => {
 
         const success = (position) => {
@@ -46,6 +44,7 @@ const FullMap = () => {
         } else {
             navigator.geolocation.getCurrentPosition(success, error)
         }
+        console.log(longitude,lat, lon)
 
     }, []);
 
@@ -106,22 +105,23 @@ const FullMap = () => {
 
         const bounds = new mapboxgl.LngLatBounds();
         bounds.extend([lon, lat]);
-        // map.fitBounds(bounds, { padding: 200 });
+        bounds.extend([longitude, latitude]);
+        map.fitBounds(bounds, { padding: 200 });
 
-        marker.current = new mapboxgl.Marker().setLngLat([longitude, latitude]).addTo(map);
         setSelectedHospital(
             {
                 Longitude: lon,
                 Latitude: lat
             }
         )
+        
+        marker.current = new mapboxgl.Marker().setLngLat([longitude, latitude]).addTo(map);
         console.log(selectedHospital)
     }, [latitude, longitude]);
 
     useEffect(() => {
 
         if (!selectedHospital) return; // no hospital selected
-        // console.log(`https://api.mapbox.com/directions/v5/mapbox/driving/${longitude},${latitude};${selectedHospital.Longitude},${selectedHospital.Latitude}?access_token=${mapboxgl.accessToken}`)
 
         const directions = new MapboxDirections({
             accessToken: mapboxgl.accessToken,
