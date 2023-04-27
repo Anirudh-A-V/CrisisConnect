@@ -25,6 +25,7 @@ function Map() {
 
 
     const filterHospitals = () => {
+        
         // sort Data by distance
         const sortedData = Data.sort((a, b) => {
             const distance_a = Math.sqrt(Math.pow(a.Latitude - latitude, 2) + Math.pow(a.Longitude - longitude, 2));
@@ -54,8 +55,13 @@ function Map() {
         // })
 
         sortedData.map((hospital) => {
+            // console.log('hospital', hospital)
+            // console.log('latitude', latitude)
+            // console.log('longitude', longitude)
             const from = turf.point([latitude, longitude]);
+            // console.log('from', from)
             const to = turf.point([hospital.Latitude, hospital.Longitude]);
+            // console.log('to', to)
             const options = { units: 'kilometers' };
             const distance = turf.distance(from, to, options);
             console.log(distance);
@@ -83,13 +89,13 @@ function Map() {
             console.log('Geolocation is not supported by your browser')
         } else {
             navigator.geolocation.getCurrentPosition(success, error)
-            filterHospitals();
+            
         }
 
     }, []);
 
     useEffect(() => {
-        if (longitude === 0 && latitude === 0) return; // wait for location to be retrieved
+        if (longitude === 0 && latitude === 0) return; // wait for location to be retrieved    
         const map = new mapboxgl.Map({
             container: mapContainer.current,
             style: 'mapbox://styles/mapbox/streets-v12',
@@ -138,6 +144,8 @@ function Map() {
 
         map.addControl(Directions, 'top-left');
 
+        filterHospitals();
+
         // map.on('load', () => {
         //     // Use Mapbox Places API to find nearby hospitals
         //     fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/hospital.json?proximity=${longitude},${latitude}&access_token=${mapboxgl.accessToken}&limit=10`)
@@ -174,7 +182,13 @@ function Map() {
         //         .catch((err) => console.log(err));
         // });
 
+        marker.current = new mapboxgl.Marker().setLngLat([longitude, latitude]).addTo(map);
+
+    }, [latitude, longitude]);
+
+    useEffect(() => {
         hospitals.forEach((hospital) => {
+            console.log('Adding markers to map')
             const marker = new mapboxgl.Marker({ color: '#FF0000' })
                 .setLngLat([hospital.Longitude, hospital.Latitude])
                 .addTo(map);
@@ -191,13 +205,11 @@ function Map() {
 
         const bounds = new mapboxgl.LngLatBounds();
         hospitals.forEach((hospital) => {
-            bounds.extend([hospital.Longitude, hospital.Latitude]);
+            bounds.extend([parseFloat(hospital.Longitude), parseFloat(hospital.Latitude)]);
         })
         map.fitBounds(bounds, { padding: 20 });
 
-        marker.current = new mapboxgl.Marker().setLngLat([longitude, latitude]).addTo(map);
-
-    }, [latitude, longitude]);
+    }, [hospitals]);
 
 
     useEffect(() => {
@@ -252,22 +264,22 @@ function Map() {
                 ) : (
                     <div className='flex flex-col justify-start mt-5 items-center h-full'>
                         <div className='flex flex-row justify-center items-center w-full'>
-                            <div ref={mapContainer} className='map-container w-4/5' />
+                            <div ref={mapContainer} className='map-container w-4/5 max-sm:w-[95vw]' />
                         </div>
                     </div>
                 )
             }
             {hospitals && hospitals.length > 0 && (
-                <div className='Hospital-List'>
+                <div className='Hospital-List '>
                     <h1 className='text-2xl font-bold text-center mt-10'>Hospitals</h1>
                     <div className='flex flex-col justify-center items-center'>
                         {hospitals.map((hospital) => (
-                            <div key={hospital.id} onClick={() => setSelectedHospital(hospital)} className='flex justify-center flex-col h-7 w-4/5 p-6 m-1 bg-slate-50 rounded-md cursor-pointer'>
-                                <p className='font-normal text-gray-700 text-base'>{hospital.Name}</p>
+                            <div key={hospital.id} onClick={() => setSelectedHospital(hospital)} className='bg-white shadow-md rounded-lg overflow-hidden w-1/2 m-4 h-fit cursor-pointer p-2 max-sm:w-3/4 '>
+                                <p className='text-xl font-bold text-gray-800 mb-1'>{hospital.Name}</p>
                                 <div className='flex flex-row justify-end'>
                                     {/* <p className='font-normal text-sm mr-2'>{hospital.Latitude}</p>
                   <p className='font-normal text-sm'>{hospital.Longitude}</p> */}
-                                    <p className='font-normal text-sm'>{`${+hospital.distance.toFixed(2)} km`}</p>
+                                    <p className='text-gray-600 text-sm'>{`${+hospital.distance.toFixed(2)} km`}</p>
                                 </div>
                             </div>
                         ))}
