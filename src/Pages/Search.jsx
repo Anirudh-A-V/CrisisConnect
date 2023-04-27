@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import Navbar from '../Components/Navbar'
 import * as turf from '@turf/turf';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import Location from '../Data/location.js'
 import Query from '../Data/query'
@@ -71,14 +71,16 @@ const Search = () => {
         console.log(result)
 
         setSearchResults(result)
-        // scroll to section 'results'
-        document.querySelector('.results').scrollIntoView({ behavior: 'smooth' })
     }
 
     const quickSearchHandler = (search) => {
         setSearch(search)
         searchHandler()
     }
+
+    useEffect(() => {
+        document.querySelector('.results').scrollIntoView({ behavior: 'smooth' })
+    }, [searchResults])
 
     return (
         <div>
@@ -125,9 +127,9 @@ const Search = () => {
                         <div className='flex flex-wrap justify-center items-center mt-10 h-fit w-3/5'>
                             {searchResults.slice(0, 7).map((hospital, index) => {
                                 return (
-                                    <div key={index} className='bg-white shadow-md rounded-lg overflow-hidden w-2/3 m-4 h-fit' role='button'
-                                        onClick={() => {
-                                            navigate(`/search/${hospital.Latitude}/${hospital.Longitude}`)
+                                    <Link key={index} className='bg-white shadow-md rounded-lg overflow-hidden w-2/3 m-4 h-fit' role='button'
+                                        to={{
+                                            pathname: `/search/${hospital.Latitude}/${hospital.Longitude}`,
                                         }}>
                                         <div className='px-4 py-2'>
                                             <h1 className='text-xl font-bold text-gray-800'>{hospital.Name}</h1>
@@ -140,7 +142,7 @@ const Search = () => {
                                             })}
                                         </div> */}
 
-                                    </div>
+                                    </Link>
                                 )
                             }
                             )}
