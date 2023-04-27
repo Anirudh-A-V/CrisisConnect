@@ -188,7 +188,7 @@ function Map() {
 
     useEffect(() => {
         if (hospitals.length === 0) return; // wait for hospitals to be loaded
-        
+
         hospitals.forEach((hospital) => {
             console.log('Adding markers to map')
             const marker = new mapboxgl.Marker({ color: '#FF0000' })
@@ -211,6 +211,7 @@ function Map() {
         })
         map.fitBounds(bounds, { padding: 20 });
 
+        document.querySelector('.Hospital-List').scrollIntoView({ behavior: 'smooth' });
     }, [hospitals]);
 
 
@@ -257,26 +258,29 @@ function Map() {
     return (
         <div>
             <Navbar />
-            <h1 className='text-3xl font-bold text-center mt-10'>Hospital Locator</h1>
+            {/* <h1 className='text-3xl font-bold text-center mt-10'>Hospital Locator</h1> */}
             {
                 longitude === 0 && latitude === 0 && mapContainer === null ? (
                     <div className='flex flex-col justify-center items-center h-screen'>
                         <p className='font-normal text-xl'>Loading...</p>
                     </div>
                 ) : (
-                    <div className='flex flex-col justify-start mt-5 items-center h-full'>
+                    <section className='Map flex flex-col justify-start mt-5 items-center h-full'>
                         <div className='flex flex-row justify-center items-center w-full'>
                             <div ref={mapContainer} className='map-container w-4/5 max-sm:w-[95vw]' />
                         </div>
-                    </div>
+                    </section>
                 )
             }
             {hospitals && hospitals.length > 0 && (
-                <div className='Hospital-List '>
+                <section className='Hospital-List'>
                     <h1 className='text-2xl font-bold text-center mt-10'>Hospitals</h1>
                     <div className='flex flex-col justify-center items-center'>
                         {hospitals.map((hospital) => (
-                            <div key={hospital.id} onClick={() => setSelectedHospital(hospital)} className='bg-white shadow-md rounded-lg overflow-hidden w-1/2 m-4 h-fit cursor-pointer p-2 max-sm:w-3/4 '>
+                            <div key={hospital.id} onClick={() => {
+                                setSelectedHospital(hospital)
+                                document.querySelector('.Map').scrollIntoView({ behavior: 'smooth' })
+                            }} className='bg-white shadow-md rounded-lg overflow-hidden w-1/2 m-4 h-fit cursor-pointer p-2 max-sm:w-3/4 '>
                                 <p className='text-xl font-bold text-gray-800 mb-1'>{hospital.Name}</p>
                                 <div className='flex flex-row justify-end'>
                                     {/* <p className='font-normal text-sm mr-2'>{hospital.Latitude}</p>
@@ -286,7 +290,7 @@ function Map() {
                             </div>
                         ))}
                     </div>
-                </div>
+                </section>
             )}
         </div>
     );
