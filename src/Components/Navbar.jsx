@@ -2,7 +2,7 @@ import React from 'react'
 
 const Navbar = () => {
     return (
-        <nav className='flex justify-end items-center h-16 bg-white relative font-mono mt-4k' role='navigation'>
+        <nav className='flex justify-end items-center h-16 bg-white max-sm:relative fixed top-0 z-10 w-screen font-mono mt-4k' role='navigation'>
             <ul className="inline-block list-none p-0">
                 <li className="inline-block mr-2">
                     <a href="/" className="text-gray-600 text-lg hover:text-gray-900 font-bold py-2 px-4 rounded inline-flex items-center hover:bg-slate-100 transition-all duration-100 ease-in-out">
@@ -10,7 +10,7 @@ const Navbar = () => {
                     </a>
                 </li>
                 <li className="inline-block mr-2">
-                    <a href="#about" className="text-gray-600 text-lg hover:text-gray-900 font-bold py-2 px-4 rounded inline-flex items-center hover:bg-slate-100 transition-all duration-100 ease-in-out">
+                    <a href="#About" className="text-gray-600 text-lg hover:text-gray-900 font-bold py-2 px-4 rounded inline-flex items-center hover:bg-slate-100 transition-all duration-100 ease-in-out">
                         <span>About</span>
                     </a>
                 </li>

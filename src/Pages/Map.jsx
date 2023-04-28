@@ -265,9 +265,9 @@ function Map() {
                         <p className='font-normal text-xl'>Loading...</p>
                     </div>
                 ) : (
-                    <section className='Map flex flex-col justify-start mt-5 items-center h-full'>
+                    <section className='Map flex flex-col justify-start sm:mt-20 items-center h-full'>
                         <div className='flex flex-row justify-center items-center w-full'>
-                            <div ref={mapContainer} className='map-container w-4/5 max-sm:w-[95vw]' />
+                            <div ref={mapContainer} className='map-container w-4/5 max-sm:w-[95vw] max-sm:h-[600px]' />
                         </div>
                     </section>
                 )
