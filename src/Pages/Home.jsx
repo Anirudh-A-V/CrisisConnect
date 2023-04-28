@@ -34,7 +34,7 @@ const Home = () => {
                     </div>
                 </div>
             </section>
-            <section className='About bg-gray-50 h-screen overflow-hidden'>
+            <section className='About bg-gray-50 h-screen overflow-hidden' id='About'>
                 <div className='flex flex-row max-sm:flex-col-reverse max-sm:justify-start justify-center items-center h-full'>
                     <div className='flex flex-col justify-center max-sm:h-auto max-sm:w-[95vw] items-center h-1/2 w-1/2'>
                         <img src={About} alt='hospital' className='max-sm:h-auto max-sm:mt-6 h-full w-full object-cover' />
@@ -64,7 +64,7 @@ const Home = () => {
                     </div>
                 </div>
             </section>
-            <section className='About bg-gray-50 h-screen overflow-hidden'>
+            <section className='Contact bg-gray-50 h-screen overflow-hidden' id='Contact'>
                 <div className='flex flex-row max-sm:flex-col max-sm:justify-start justify-center items-center h-full'>
                     <div className='flex flex-col max-sm:w-full max-sm:items-center max-sm:h-auto justify-start items-start h-full w-1/2'>
                         <h2 className='text-6xl max-sm:text-5xl mt-36 max-sm:mx-4 max-sm:mt-24 ml-10 font-bold  text-center text-gray-800'>

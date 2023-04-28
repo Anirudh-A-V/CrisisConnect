@@ -94,5 +94,6 @@ button:focus-visible {
 
 * {
   box-sizing: border-box;
+  scroll-behavior: smooth;
   /* border: #ff0000 solid 1px !important; */
 }
