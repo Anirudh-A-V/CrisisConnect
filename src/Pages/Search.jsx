@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 import Location from '../Data/location.js'
 import Query from '../Data/query'
+import Footer from '../Components/Footer';
 
 const Search = () => {
     const [search, setSearch] = useState('')
@@ -85,7 +86,7 @@ const Search = () => {
     return (
         <div>
             <Navbar />
-            <section className='white h-auto w-full'>
+            <section className='white max-sm:h-full h-auto w-full'>
                 <div className='flex flex-col justify-start mt-10 items-center h-full w-full'>
                     <h1 className='text-7xl max-sm:text-5xl max-sm:mx-auto mt-20 ml-10 font-bold text-center text-gray-800'>
                         <span className='text-gray-600'>Search</span>
@@ -156,6 +157,7 @@ const Search = () => {
                     </div>
                 }
             </section>
+            {/* <Footer /> */}
         </div>
     )
 }

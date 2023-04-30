@@ -9,6 +9,7 @@ import "@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions.css";
 
 import Data from '../Data/location.js';
 import Navbar from '../Components/Navbar.jsx';
+import Footer from '../Components/Footer.jsx';
 
 mapboxgl.accessToken = 'pk.eyJ1IjoiYW5pcnVkaGF2MDIiLCJhIjoiY2xncDR0cGI1MGJubDNyc3UwcHhhd3BsayJ9.mqNU3ZXIGHnS5PifEDrUtQ';
 
@@ -23,6 +24,8 @@ function Map() {
     const [selectedHospital, setSelectedHospital] = useState(null);
     const [map, setMap] = useState(null);
 
+    const emergency = ["Thiruvananthapuram Medical College Casualty", "KIMS Hospital", "Cosmopolitan Hospital", "GG Hospital", "SUT", "Credence Hospital"];
+
 
     const filterHospitals = () => {
         
@@ -34,25 +37,6 @@ function Map() {
         });
 
         const R = 6371; // radius of the earth in km
-
-        // sortedData.map((hospital) => {
-        //     const lat1 = latitude;
-        //     const lon1 = longitude;
-        //     const lat2 = hospital.Latitude;
-        //     const lon2 = hospital.Longitude;
-
-        //     const dLat = (lat2 - lat1) * Math.PI / 180;
-        //     const dLon = (lon2 - lon1) * Math.PI / 180;
-        //     const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        //         Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-        //         Math.sin(dLon / 2) * Math.sin(dLon / 2);
-        //     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        //     const distance = R * c;
-
-        //     console.log(distance);
-        //     hospital.distance = distance;
-        //     return hospital;
-        // })
 
         sortedData.map((hospital) => {
             // console.log('hospital', hospital)
@@ -292,6 +276,7 @@ function Map() {
                     </div>
                 </section>
             )}
+            <Footer />
         </div>
     );
 }

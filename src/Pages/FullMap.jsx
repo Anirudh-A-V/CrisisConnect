@@ -11,6 +11,7 @@ import "@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions.css";
 
 import Data from '../Data/location.js';
 import Navbar from '../Components/Navbar.jsx';
+import Footer from '../Components/Footer.jsx';
 
 mapboxgl.accessToken = 'pk.eyJ1IjoiYW5pcnVkaGF2MDIiLCJhIjoiY2xncDR0cGI1MGJubDNyc3UwcHhhd3BsayJ9.mqNU3ZXIGHnS5PifEDrUtQ';
 
@@ -161,6 +162,7 @@ const FullMap = () => {
         <div>
             <Navbar />
             <div className="full-map-container" ref={mapContainer} />
+            {/* <Footer /> */}
         </div>
     )
 }
