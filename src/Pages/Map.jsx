@@ -13,7 +13,7 @@ import Footer from '../Components/Footer.jsx';
 
 mapboxgl.accessToken = 'pk.eyJ1IjoiYW5pcnVkaGF2MDIiLCJhIjoiY2xncDR0cGI1MGJubDNyc3UwcHhhd3BsayJ9.mqNU3ZXIGHnS5PifEDrUtQ';
 
-function Map() {
+function Map({ crisis }) {
     const mapContainer = useRef(null);
     const marker = useRef(null);
     const [longitude, setLongitude] = useState(0);
@@ -24,17 +24,31 @@ function Map() {
     const [selectedHospital, setSelectedHospital] = useState(null);
     const [map, setMap] = useState(null);
 
-    const emergency = ["Thiruvananthapuram Medical College Casualty", "KIMS Hospital", "Cosmopolitan Hospital", "GG Hospital", "SUT", "Credence Hospital"];
+    const emergency = ["Thiruvananthapuram Medical College Casualty", "KIMS Hospital", "Cosmopolitan Hospital", "GG Hospital", "Sree Uthradom Thirunal (SUT) Hospital", "Credence Hospital", "Ananthapuri Hospitals and Research Institute (AHRI)"];
 
 
     const filterHospitals = () => {
-        
-        // sort Data by distance
-        const sortedData = Data.sort((a, b) => {
-            const distance_a = Math.sqrt(Math.pow(a.Latitude - latitude, 2) + Math.pow(a.Longitude - longitude, 2));
-            const distance_b = Math.sqrt(Math.pow(b.Latitude - latitude, 2) + Math.pow(b.Longitude - longitude, 2));
-            return distance_a - distance_b;
-        });
+        let sortedData = [];
+
+        if (crisis) {
+            const emergencyHospitals = Data.filter((hospital) => {
+                return emergency.includes(hospital.Name);
+            });
+
+            // sort Data by distance
+            sortedData = emergencyHospitals.sort((a, b) => {
+                const distance_a = Math.sqrt(Math.pow(a.Latitude - latitude, 2) + Math.pow(a.Longitude - longitude, 2));
+                const distance_b = Math.sqrt(Math.pow(b.Latitude - latitude, 2) + Math.pow(b.Longitude - longitude, 2));
+                return distance_a - distance_b;
+            });
+        } else {
+            // sort Data by distance
+            sortedData = Data.sort((a, b) => {
+                const distance_a = Math.sqrt(Math.pow(a.Latitude - latitude, 2) + Math.pow(a.Longitude - longitude, 2));
+                const distance_b = Math.sqrt(Math.pow(b.Latitude - latitude, 2) + Math.pow(b.Longitude - longitude, 2));
+                return distance_a - distance_b;
+            });
+        }
 
         const R = 6371; // radius of the earth in km
 
@@ -73,7 +87,7 @@ function Map() {
             console.log('Geolocation is not supported by your browser')
         } else {
             navigator.geolocation.getCurrentPosition(success, error)
-            
+
         }
 
     }, []);

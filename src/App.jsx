@@ -13,6 +13,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/map" element={<Map />} />
         <Route path="/search" element={<Search />} />
+        <Route path="/emergency" element={<Map crisis={true} />} />
         <Route path="/search/:lat/:lon" element={<FullMap />} />
         <Route path="/*" element={<h1>404 Not Found</h1>} />
       </Routes>

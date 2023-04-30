@@ -15,13 +15,18 @@ const Home = () => {
                             <span className='text-gray-600'>Crisis</span>
                             <span className='text-gray-500'>Connect</span>
                         </h1>
-                        <p className='text-justify ml-10 mt-4 max-sm:mx-4 text-gray-700'>Crisis connect is an online medical emergency  information resource for people in an emergency situation .Anyone from anywhere can connect to nearby hospitals with maximum facilities for their emergency medical condition.</p>
-                        <div className='flex flex-row justify-start items-start max-sm:mx-4 mt-4 ml-10'>
-                            <button className='bg-red-400 hover:bg-red-500 text-white font-bold py-2 px-4 rounded-3xl mt-4 max-sm:mx-0 ml-10'>
-                                <a href='/map'>Emergency</a>
-                            </button>
-                            <button className='bg-blue-400 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded-3xl mt-4 ml-10'>
-                                <a href='/search'>Search</a>
+                        <p className='text-justify ml-10 mt-4 max-sm:mx-4 text-gray-700'>Crisis connect is an online medical emergency  information resource for people in an emergency situation. Anyone from anywhere can connect to nearby hospitals with maximum facilities for their emergency medical condition.</p>
+                        <div className='flex flex-col justify-center items-center max-sm:mx-4 mt-4 ml-10'>
+                            <div className='flex flex-row justify-start items-start max-sm:mx-4 '>
+                                <button className='bg-red-400 hover:bg-red-500 text-white font-bold py-2 px-4 rounded-3xl max-sm:mx-0 mt-4 mx-5'>
+                                    <a href='/emergency'>Emergency</a>
+                                </button>
+                                <button className='bg-blue-400 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded-3xl mt-4 mx-5'>
+                                    <a href='/search'>Search</a>
+                                </button>
+                            </div>
+                            <button className='bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-3xl mt-4 m-auto'>
+                                <a href='/map'>Hospitals Near Me</a>
                             </button>
                         </div>
 
