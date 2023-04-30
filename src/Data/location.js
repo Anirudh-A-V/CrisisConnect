@@ -170,7 +170,13 @@ const locations = [
         "Name": "General Hospital",
         "Latitude": "8.499618417550836",
         "Longitude": "76.9429911859288",
-    }
+    },
+    {
+        "id": "29",
+        "Name": "Ananthapuri Hospitals and Research Institute (AHRI)",
+        "Latitude": "8.486346756526123",
+        "Longitude": "76.92700504053035",
+    },
 ]
 
 let data = []
