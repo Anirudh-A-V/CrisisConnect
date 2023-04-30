@@ -5,7 +5,7 @@ import hospitals from './hospital.json' assert { type: "json" };
 const locations = [
     {
         "id": "1",
-        "Name": "Thiruvananthapuram Medical College Casualty",
+        "Name": "Thiruvananthapuram Medical College",
         "Latitude": "8.5235626173231",
         "Longitude": "76.92779843082823"
     },
@@ -35,7 +35,7 @@ const locations = [
     },
     {
         "id": "6",
-        "Name": "KJK Hospital and Fertility Research Centre ",
+        "Name": "KJK Hospital and Fertility Research Centre",
         "Latitude": "8.541649062002989",
         "Longitude": "76.93930896646637",
     },

@@ -24,7 +24,7 @@ function Map({ crisis }) {
     const [selectedHospital, setSelectedHospital] = useState(null);
     const [map, setMap] = useState(null);
 
-    const emergency = ["Thiruvananthapuram Medical College Casualty", "KIMS Hospital", "Cosmopolitan Hospital", "GG Hospital", "Sree Uthradom Thirunal (SUT) Hospital", "Credence Hospital", "Ananthapuri Hospitals and Research Institute (AHRI)"];
+    const emergency = ["Thiruvananthapuram Medical College", "KIMS Hospital", "Cosmopolitan Hospital", "GG Hospital", "Sree Uthradom Thirunal (SUT) Hospital", "Credence Hospital", "Ananthapuri Hospitals and Research Institute (AHRI)"];
 
 
     const filterHospitals = () => {
@@ -66,7 +66,6 @@ function Map({ crisis }) {
             hospital.distance = distance;
             return hospital;
         });
-
 
         setHospitals(sortedData.slice(0, 7))
     }
