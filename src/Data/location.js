@@ -411,7 +411,7 @@ const hospitals = [
     },
     {
         "id": "22",
-        "Name": ""GG Hospital,
+        "Name": "GG Hospital",
         "Latitude": "8.515784145453573",
         "Longitude": "76.9332936597226",
         "services": [
