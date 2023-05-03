@@ -93,6 +93,7 @@ function Map({ crisis }) {
 
     useEffect(() => {
         if (longitude === 0 && latitude === 0) return; // wait for location to be retrieved    
+        
         const map = new mapboxgl.Map({
             container: mapContainer.current,
             style: 'mapbox://styles/mapbox/streets-v12',

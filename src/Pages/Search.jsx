@@ -1,87 +1,95 @@
-import { useState, useEffect } from 'react'
-import Navbar from '../Components/Navbar'
+import { useState, useEffect } from 'react';
+import Navbar from '../Components/Navbar';
 import * as turf from '@turf/turf';
 import { Link, useNavigate } from 'react-router-dom';
 
-import Location from '../Data/location.js'
-import Query from '../Data/query'
+import Location from '../Data/location.js';
+import Query from '../Data/query';
 import Footer from '../Components/Footer';
 
 const Search = () => {
-    const [search, setSearch] = useState('')
-    const [services, setServices] = useState([])
-    const [searchResults, setSearchResults] = useState([])
-    const [longitude, setLongitude] = useState(0)
-    const [latitude, setLatitude] = useState(0)
+    const [search, setSearch] = useState('');
+    const [searchquery, setSearchquery] = useState('');
+    const [services, setServices] = useState([]);
+    const [searchResults, setSearchResults] = useState([]);
+    const [longitude, setLongitude] = useState(null);
+    const [latitude, setLatitude] = useState(null);
 
-    const navigate = useNavigate()
+    const navigate = useNavigate();
 
     useEffect(() => {
-
         const success = (position) => {
-            setLongitude(position.coords.longitude)
-            setLatitude(position.coords.latitude)
-        }
+            setLongitude(position.coords.longitude);
+            setLatitude(position.coords.latitude);
+            console.log('Longitude: ' + position.coords.longitude);
+            console.log('Latitude: ' + position.coords.latitude);
+        };
+
+        const options = {
+            enableHighAccuracy: true,
+            timeout: 5000, // Maximum time allowed for position retrieval
+            maximumAge: 0, // Don't use a cached position
+        };
 
         const error = () => {
-            console.log('Unable to retrieve your location')
-        }
+            console.log('Unable to retrieve your location');
+        };
 
         if (!navigator.geolocation) {
-            console.log('Geolocation is not supported by your browser')
+            console.log('Geolocation is not supported by your browser');
         } else {
-            navigator.geolocation.getCurrentPosition(success, error)
+            navigator.geolocation.getCurrentPosition(success, error, options);
         }
-
     }, []);
 
     const searchHandler = () => {
+        if (!search || !latitude || !longitude) {
+            return;
+        }
 
-        const service_result = Query.filter((service) => {
-            return service.name.toLowerCase().includes(search.toLowerCase())
-        })[0]
-        setServices(service_result)
-        console.log(service_result)
+        const serviceResult = Query.find((service) =>
+            service.name.toLowerCase().includes(search.toLowerCase())
+        );
 
-        const sortedData = Location.sort((a, b) => {
-            const distance_a = Math.sqrt(Math.pow(a.Latitude - latitude, 2) + Math.pow(a.Longitude - longitude, 2));
-            const distance_b = Math.sqrt(Math.pow(b.Latitude - latitude, 2) + Math.pow(b.Longitude - longitude, 2));
-            return distance_a - distance_b;
-        });
+        if (!serviceResult) {
+            return;
+        }
 
-        const R = 6371; // radius of the earth in km
+        setServices(serviceResult);
+        console.log(serviceResult);
 
-        sortedData.map((hospital) => {
+        const sortedData = Location.map((hospital) => {
             const from = turf.point([latitude, longitude]);
             const to = turf.point([hospital.Latitude, hospital.Longitude]);
             const options = { units: 'kilometers' };
             const distance = turf.distance(from, to, options);
             console.log(distance);
-            hospital.distance = distance;
-            return hospital;
-        });
+            return { ...hospital, distance };
+        }).sort((a, b) => a.distance - b.distance);
 
+        const result = sortedData.filter((hospital) =>
+            serviceResult.services.every((service) => hospital.services.includes(service))
+        );
 
-        const result = sortedData.filter(hospital => {
-            // Check if the hospital services array includes all the services in obj.services
-            const res = service_result.services.every(service => {
-                return hospital.services.includes(service);
-            });
-            return res;
-        });
-        console.log(result)
-
-        setSearchResults(result)
-    }
+        console.log(result);
+        setSearchResults(result);
+    };
 
     const quickSearchHandler = (search) => {
-        setSearch(search)
-        searchHandler()
-    }
+        setSearch(search);
+    };
 
     useEffect(() => {
-        document.querySelector('.results').scrollIntoView({ behavior: 'smooth' })
-    }, [searchResults])
+        searchHandler();
+    }, [search]);
+
+    useEffect(() => {
+        searchHandler();
+    }, [latitude, longitude]);
+
+    useEffect(() => {
+        document.querySelector('.results').scrollIntoView({ behavior: 'smooth' });
+    }, [searchResults]);
 
     return (
         <div>
@@ -92,14 +100,24 @@ const Search = () => {
                         <span className='text-gray-600'>Search</span>
                         <span className='text-gray-500'> Emergencies</span>
                     </h1>
-                    <input type="text" placeholder="Search" className="w-1/2 max-sm:w-4/5 max-sm:mt-8 h-12 mt-8 border-2 border-gray-300 rounded-lg px-4 focus:outline-none focus:border-blue-500" onChange={e => setSearch(e.target.value)} 
-                    onKeyDown={e => {
-                        if (e.key === 'Enter') {
-                            searchHandler()
-                        }
-                    }}
+                    <input type="text" placeholder="Search" className="w-1/2 max-sm:w-4/5 max-sm:mt-8 h-12 mt-8 border-2 border-gray-300 rounded-lg px-4 focus:outline-none focus:border-blue-500" onChange={e => setSearchquery(e.target.value)}
+                        onKeyDown={e => {
+                            if (e.key === 'Enter') {
+                                setSearch(searchquery)
+                                searchHandler()
+                            }
+                        }}
+                        list="searchSuggestions"
                     />
-                    <button className='bg-blue-400 hover:bg-blue-500 text-white max-sm:text-lg font-bold py-2 px-4 rounded-3xl max-sm:mx-auto mt-6 ml-10' onClick={searchHandler} role='button'>
+                    <datalist id="searchSuggestions">
+                        {Query.map((keyword, index) => (
+                            <option key={index} value={keyword.name} />
+                        ))}
+                    </datalist>
+                    <button className='bg-blue-400 hover:bg-blue-500 text-white max-sm:text-lg font-bold py-2 px-4 rounded-3xl max-sm:mx-auto mt-6 ml-10' onClick={() => {
+                        setSearch(searchquery)
+                        searchHandler()
+                    }} role='button'>
                         Search
                     </button>
                     <div className='flex flex-wrap justify-center items-center mt-10 h-fit w-3/5'>
