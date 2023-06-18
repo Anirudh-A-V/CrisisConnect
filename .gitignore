@@ -24,3 +24,5 @@ dist-ssr
 *.sw?
 API.REST
 .env
+test.js
+fb.js
