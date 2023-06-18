@@ -1,272 +1,234 @@
-import { useState, useRef, useEffect } from 'react';
-import mapboxgl from 'mapbox-gl';
-import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
-import MapboxDirections from "@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions";
-import * as turf from '@turf/turf';
+import { useState, useRef, useEffect, useMemo, useCallback, useContext } from 'react';
+import { GoogleMap, useLoadScript, Marker, LoadScript, DirectionsService, DirectionsRenderer } from '@react-google-maps/api';
 
-import 'mapbox-gl/dist/mapbox-gl.css';
-import "@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions.css";
-
-import Data from '../Data/location.js';
 import Navbar from '../Components/Navbar.jsx';
 import Footer from '../Components/Footer.jsx';
+import { GoogleMapsContext } from '../App.jsx';
 
-mapboxgl.accessToken = 'pk.eyJ1IjoiYW5pcnVkaGF2MDIiLCJhIjoiY2xncDR0cGI1MGJubDNyc3UwcHhhd3BsayJ9.mqNU3ZXIGHnS5PifEDrUtQ';
+const libraries = ['places'];
 
 function Map({ crisis }) {
-    const mapContainer = useRef(null);
-    const marker = useRef(null);
+    const [hospitals, setHospitals] = useState([]);
+    const [selectedHospital, setSelectedHospital] = useState(null);
+
+    const mapRef = useRef();
     const [longitude, setLongitude] = useState(0);
     const [latitude, setLatitude] = useState(0);
-    const [zoom, setZoom] = useState(15);
-    const [hospitals, setHospitals] = useState([]);
-    const [hospitalData, setHospitalData] = useState(null);
-    const [selectedHospital, setSelectedHospital] = useState(null);
-    const [map, setMap] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [directions, setDirections] = useState(null);
+    const [currentStep, setCurrentStep] = useState(0);
+    const [distance, setDistance] = useState(0);
+    const [trafficLayer, setTrafficLayer] = useState(null);
+    const [eta, setETA] = useState('');
+    const [mapLoaded, setMapLoaded] = useState(false);
 
-    const emergency = ["Thiruvananthapuram Medical College", "KIMS Hospital", "Cosmopolitan Hospital", "GG Hospital", "Sree Uthradom Thirunal (SUT) Hospital", "Credence Hospital", "Ananthapuri Hospitals and Research Institute (AHRI)"];
+    // const { isLoaded, loadError } = useLoadScript({
+    //     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
+    //     libraries: libraries,
+    // });
 
+    const { isLoaded, loadError } = useContext(GoogleMapsContext);
 
-    const filterHospitals = () => {
-        let sortedData = [];
+    const onLoad = useCallback((map) => {
+        mapRef.current = map;
+        setMapLoaded(true);
+    }, []);
 
-        if (crisis) {
-            const emergencyHospitals = Data.filter((hospital) => {
-                return emergency.includes(hospital.Name);
-            });
-
-            // sort Data by distance
-            sortedData = emergencyHospitals.sort((a, b) => {
-                const distance_a = Math.sqrt(Math.pow(a.Latitude - latitude, 2) + Math.pow(a.Longitude - longitude, 2));
-                const distance_b = Math.sqrt(Math.pow(b.Latitude - latitude, 2) + Math.pow(b.Longitude - longitude, 2));
-                return distance_a - distance_b;
-            });
-        } else {
-            // sort Data by distance
-            sortedData = Data.sort((a, b) => {
-                const distance_a = Math.sqrt(Math.pow(a.Latitude - latitude, 2) + Math.pow(a.Longitude - longitude, 2));
-                const distance_b = Math.sqrt(Math.pow(b.Latitude - latitude, 2) + Math.pow(b.Longitude - longitude, 2));
-                return distance_a - distance_b;
-            });
-        }
-
-        const R = 6371; // radius of the earth in km
-
-        sortedData.map((hospital) => {
-            // console.log('hospital', hospital)
-            // console.log('latitude', latitude)
-            // console.log('longitude', longitude)
-            const from = turf.point([latitude, longitude]);
-            // console.log('from', from)
-            const to = turf.point([hospital.Latitude, hospital.Longitude]);
-            // console.log('to', to)
-            const options = { units: 'kilometers' };
-            const distance = turf.distance(from, to, options);
-            console.log(distance);
-            hospital.distance = distance;
-            return hospital;
-        });
-
-        setHospitals(sortedData.slice(0, 7))
-    }
-
+    const center = useMemo(() => ({ lat: latitude, lng: longitude }), [latitude, longitude]);
+    const options = useMemo(() => ({ disableDefaultUI: false }), []);
 
     useEffect(() => {
-
         const success = (position) => {
-            setLongitude(position.coords.longitude)
-            setLatitude(position.coords.latitude)
-        }
+            setLongitude(position.coords.longitude);
+            setLatitude(position.coords.latitude);
+        };
 
         const error = () => {
-            console.log('Unable to retrieve your location')
-        }
+            console.log('Unable to retrieve your location');
+        };
 
         if (!navigator.geolocation) {
-            console.log('Geolocation is not supported by your browser')
+            console.log('Geolocation is not supported by your browser');
         } else {
-            navigator.geolocation.getCurrentPosition(success, error)
-
+            navigator.geolocation.getCurrentPosition(success, error);
         }
-
     }, []);
 
     useEffect(() => {
-        if (longitude === 0 && latitude === 0) return; // wait for location to be retrieved    
-        
-        const map = new mapboxgl.Map({
-            container: mapContainer.current,
-            style: 'mapbox://styles/mapbox/streets-v12',
-            center: [longitude, latitude],
-            zoom: zoom
-        });
-        setMap(map);
+        if (longitude === 0 && latitude === 0) return;
 
-        map.addControl(new mapboxgl.GeolocateControl({
-            positionOptions: {
-                enableHighAccuracy: true
-            },
-            trackUserLocation: true,
-            showUserHeading: true,
-            showAccuracyCircle: true,
-            showUserLocation: true,
-            fitBoundsOptions: {
-                maxZoom: 15
-            },
-        }), 'bottom-right');
-
-        const nav = new mapboxgl.NavigationControl();
-        // map.addControl(nav, 'top-left');
-
-        const scale = new mapboxgl.ScaleControl({
-            maxWidth: 80,
-            unit: 'imperial'
-        });
-        // map.addControl(scale);
-
-        // scale.setUnit('metric');
-
-        const geocoder = new MapboxGeocoder({
-            accessToken: mapboxgl.accessToken,
-            mapboxgl: mapboxgl,
-        });
-
-        // map.addControl(geocoder);
-
-        const Directions = new MapboxDirections({
-            accessToken: mapboxgl.accessToken,
-            unit: 'metric',
-            profile: 'mapbox/driving',
-            controls: { instructions: false },
-        });
-
-        map.addControl(Directions, 'top-left');
-
-        filterHospitals();
-
-        // map.on('load', () => {
-        //     // Use Mapbox Places API to find nearby hospitals
-        //     fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/hospital.json?proximity=${longitude},${latitude}&access_token=${mapboxgl.accessToken}&limit=10`)
-        //         .then((response) => response.json())
-        //         .then((res) => {
-        //             setHospitalData(res);
-        //             setHospitals(res.features);
-        //             console.log(res.features)
-
-        //             console.log('Adding markers to map')
-        //             hospitals.forEach((hospital) => {
-        //                 const marker = new mapboxgl.Marker({ color: '#FF0000' })
-        //                     .setLngLat(hospital.geometry.coordinates)
-        //                     .addTo(map);
-        //                 console.log('Adding event listeners to markers')
-
-        //                 marker.getElement().addEventListener('mouseenter', () => {
-        //                     marker.getElement().style.cursor = 'pointer';
-        //                 });
-
-        //                 marker.getElement().addEventListener('click', () => {
-        //                     setSelectedHospital(hospital);
-        //                 });
-
-        //             });
-
-        //             console.log('Fitting map to bounds')
-        //             const bounds = new mapboxgl.LngLatBounds();
-        //             hospitals.forEach((feature) => {
-        //                 bounds.extend(feature.geometry.coordinates);
-        //             });
-        //             map.fitBounds(bounds, { padding: 20 });
-        //         })
-        //         .catch((err) => console.log(err));
-        // });
-
-        marker.current = new mapboxgl.Marker().setLngLat([longitude, latitude]).addTo(map);
-
-    }, [latitude, longitude]);
-
-    useEffect(() => {
-        if (hospitals.length === 0) return; // wait for hospitals to be loaded
-
-        hospitals.forEach((hospital) => {
-            console.log('Adding markers to map')
-            const marker = new mapboxgl.Marker({ color: '#FF0000' })
-                .setLngLat([hospital.Longitude, hospital.Latitude])
-                .addTo(map);
-
-            marker.getElement().addEventListener('mouseenter', () => {
-                marker.getElement().style.cursor = 'pointer';
-            });
-
-            marker.getElement().addEventListener('click', () => {
-                setSelectedHospital(hospital);
-            });
-
-        });
-
-        const bounds = new mapboxgl.LngLatBounds();
-        hospitals.forEach((hospital) => {
-            bounds.extend([parseFloat(hospital.Longitude), parseFloat(hospital.Latitude)]);
-        })
-        map.fitBounds(bounds, { padding: 20 });
-
-        document.querySelector('.Hospital-List').scrollIntoView({ behavior: 'smooth' });
-    }, [hospitals]);
+        setLoading(false);
+    }, [longitude, latitude]);
 
 
     useEffect(() => {
-        if (!selectedHospital) return; // no hospital selected
+        console.log("Before if statement", isLoaded, window.google, mapRef.current)
+        if (!isLoaded || !window.google || !mapLoaded) return;
+        if (loadError) {
+            console.log('Error loading Google Maps API:', loadError);
+            return;
+        }
 
-        fetch(`https://api.mapbox.com/directions/v5/mapbox/driving/${longitude},${latitude};${selectedHospital.Longitude},${selectedHospital.Latitude}?access_token=${mapboxgl.accessToken}`)
-            .then((response) => response.json())
-            .then((data) => {
-                console.log(data)
-                console.log(data.routes[0].geometry);
-                console.log('Creating new directions control')
+        const service = new window.google.maps.places.PlacesService(mapRef.current);
 
+        console.log(`Fetching ${crisis ? 'emergency ' : ''}hospitals...`);
 
-                const directions = new MapboxDirections({
-                    accessToken: mapboxgl.accessToken,
-                    unit: 'metric',
-                    profile: 'mapbox/driving',
-                    controls: { instructions: false },
-                });
-
-                console.log('Adding route to map')
-                console.log(data.routes[0].geometry)
-                directions.setOrigin([longitude, latitude]);
-                directions.setDestination([selectedHospital.Longitude, selectedHospital.Latitude]);
-                directions.addRoute(data.routes[0].geometry);
-                map.addControl(directions, 'top-left');
-                map.fitBounds(directions.getBounds(), { padding: 20 });
-            })
-            .catch((err) => console.log(err));
-
-
-        return () => {
-            if (map.getSource('route')) {
-                map.removeLayer('route');
-                map.removeSource('route');
-                map.removeControl(directions);
-            }
+        const request = {
+            location: new window.google.maps.LatLng(latitude, longitude),
+            radius: 5000, // Search within a radius of 10km
+            type: 'hospital',
+            keyword: crisis ? 'emergency' : undefined,
         };
-    }, [selectedHospital]);
 
+        service.nearbySearch(request, (results, status) => {
+            if (status === window.google.maps.places.PlacesServiceStatus.OK) {
+                // Prepare requests for distance calculation
+                const distanceRequests = results.map((hospital) => ({
+                    origin: new window.google.maps.LatLng(latitude, longitude),
+                    destination: hospital.geometry.location,
+                    travelMode: 'DRIVING',
+                }));
 
+                // Calculate distances using the Distance Matrix service
+                const distanceService = new window.google.maps.DistanceMatrixService();
+                distanceService.getDistanceMatrix(
+                    {
+                        origins: [new window.google.maps.LatLng(latitude, longitude)],
+                        destinations: distanceRequests.map((request) => request.destination),
+                        travelMode: 'DRIVING',
+                    },
+                    (response, status) => {
+                        if (status === 'OK') {
+                            const { rows } = response;
+                            const sortedHospitals = results
+                                .map((hospital, index) => ({
+                                    id: hospital.place_id,
+                                    name: hospital.name,
+                                    latitude: hospital.geometry.location.lat(),
+                                    longitude: hospital.geometry.location.lng(),
+                                    distance: rows[0].elements[index]?.distance.text,
+                                    duration: rows[0].elements[index]?.duration.text,
+                                }))
+                                .sort((a, b) => {
+                                    // Sort by distance
+                                    const distanceA = parseFloat(a.distance);
+                                    const distanceB = parseFloat(b.distance);
+                                    return distanceA - distanceB;
+                                }).slice(0, 7);
+
+                            setHospitals(sortedHospitals);
+                        } else {
+                            console.log('Error calculating distances:', status);
+                        }
+                    }
+                );
+            } else {
+                console.log('Error loading nearby places:', status);
+            }
+        });
+    }, [isLoaded, loadError, latitude, longitude, mapLoaded]);
+
+    useEffect(() => {
+        if (!isLoaded || !window.google || !mapRef.current) return;
+        if (loadError) {
+            console.log('Error loading Google Maps API:', loadError);
+            return;
+        }
+
+        if (!selectedHospital) return;
+
+        const directionsService = new window.google.maps.DirectionsService();
+
+        directionsService.route(
+            {
+                origin: new window.google.maps.LatLng(latitude, longitude),
+                destination: new window.google.maps.LatLng(selectedHospital.latitude, selectedHospital.longitude),
+                travelMode: 'DRIVING',
+            },
+            (response, status) => {
+                if (status === 'OK') {
+                    setDirections(response);
+                    setDistance(response.routes[0].legs[0].distance.text);
+                    setETA(response.routes[0].legs[0].duration.text)
+                } else {
+                    console.log('Error calculating directions:', status);
+                }
+            }
+        );
+    }, [isLoaded, loadError, latitude, longitude, mapRef, window, selectedHospital]);
 
     return (
         <div>
             <Navbar />
             {/* <h1 className='text-3xl font-bold text-center mt-10'>Hospital Locator</h1> */}
             {
-                longitude === 0 && latitude === 0 && mapContainer === null ? (
-                    <div className='flex flex-col justify-center items-center h-screen'>
-                        <p className='font-normal text-xl'>Loading...</p>
+                longitude === 0 && latitude === 0 && !isLoaded ? (
+                    <div className="full-map-container flex justify-center items-center">
+                        {loadError ? <p>Error loading the map</p> : <span className="loader"></span>}
                     </div>
                 ) : (
                     <section className='Map flex flex-col justify-start sm:mt-20 items-center h-full'>
-                        <div className='flex flex-row justify-center items-center w-full'>
-                            <div ref={mapContainer} className='map-container w-4/5 max-sm:w-[95vw] max-sm:h-[600px]' />
-                        </div>
+                        {isLoaded && (
+                            <GoogleMap
+                                zoom={13}
+                                center={center}
+                                mapContainerClassName="map-container w-4/5 max-sm:w-[95vw] max-sm:h-[600px]"
+                                options={options}
+                                onLoad={onLoad}
+                            >
+                                {!loading && (
+                                    <>
+                                        <Marker
+                                            position={center}
+                                            cursor="pointer"
+                                            onLoad={() => {
+                                                console.log('Center loaded');
+                                            }}
+                                            visible={true}
+                                            opacity={1}
+                                        />
+                                        {hospitals.length > 0 && hospitals.map((hospital) => (
+                                            <Marker
+                                                key={hospital.id}
+                                                position={{ lat: hospital.latitude, lng: hospital.longitude }}
+                                                cursor="pointer"
+                                                onClick={() => {
+                                                    console.log('Marker clicked:', hospital)
+                                                    setSelectedHospital(hospital);
+                                                }}
+                                                onLoad={() => {
+                                                    console.log('Hospital Marker loaded');
+                                                }}
+                                                visible={true}
+                                                opacity={1}
+                                            />
+                                        ))}
+                                        {directions && (
+                                            <DirectionsRenderer
+                                                options={{
+                                                    directions: directions,
+                                                    suppressMarkers: true,
+                                                    polylineOptions: {
+                                                        strokeColor: '#0000FF',
+                                                        strokeOpacity: 0.5,
+                                                        strokeWeight: 10,
+                                                    },
+                                                }}
+                                                onLoad={() => {
+                                                    console.log('Directions loaded');
+                                                }}
+                                            />
+                                        )}
+                                    </>
+                                )}
+                                {directions && (
+                                    <div className="distance">
+                                        <p>Distance: <b>{distance}</b></p>
+                                        <p>ETA: <b>{eta}</b></p>
+                                    </div>
+                                )}
+                            </GoogleMap>
+                        )}
                     </section>
                 )
             }
@@ -275,15 +237,19 @@ function Map({ crisis }) {
                     <h1 className='text-2xl font-bold text-center mt-10'>Hospitals</h1>
                     <div className='flex flex-col justify-center items-center'>
                         {hospitals.map((hospital) => (
-                            <div key={hospital.id} onClick={() => {
-                                setSelectedHospital(hospital)
-                                document.querySelector('.Map').scrollIntoView({ behavior: 'smooth' })
-                            }} className='bg-white shadow-md rounded-lg overflow-hidden w-1/2 m-4 h-fit cursor-pointer p-2 max-sm:w-3/4 '>
-                                <p className='text-xl font-bold text-gray-800 mb-1'>{hospital.Name}</p>
-                                <div className='flex flex-row justify-end'>
-                                    {/* <p className='font-normal text-sm mr-2'>{hospital.Latitude}</p>
-                  <p className='font-normal text-sm'>{hospital.Longitude}</p> */}
-                                    <p className='text-gray-600 text-sm'>{`${+hospital.distance.toFixed(2)} km`}</p>
+                            <div
+                                key={hospital.id}
+                                onClick={() => {
+                                    console.log('Hospital clicked:', hospital)
+                                    setSelectedHospital(hospital);
+                                    document.querySelector('.Map').scrollIntoView({ behavior: 'smooth' })
+                                }}
+                                className='bg-white flex justify-between shadow-md rounded-lg overflow-hidden w-1/2 m-4 h-fit cursor-pointer p-2 max-sm:w-3/4 '
+                            >
+                                <p className='text-lg font-semibold text-gray-800 mb-1'>{hospital.name}</p>
+                                <div className='flex flex-col justify-end'>
+                                    <p className='text-gray-600 text-sm'>{`${hospital.distance}`}</p>
+                                    <p className='text-gray-600 text-sm'>{`${hospital.duration}`}</p>
                                 </div>
                             </div>
                         ))}

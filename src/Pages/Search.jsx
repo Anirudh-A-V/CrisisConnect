@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import Navbar from '../Components/Navbar';
+import Navbar from '../Components/Navbar';;
 import * as turf from '@turf/turf';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -58,6 +58,8 @@ const Search = () => {
         setServices(serviceResult);
         console.log(serviceResult);
 
+        const service = new window.google.maps.DistanceMatrixService();
+
         const sortedData = Location.map((hospital) => {
             const from = turf.point([latitude, longitude]);
             const to = turf.point([hospital.Latitude, hospital.Longitude]);
@@ -66,13 +68,42 @@ const Search = () => {
             console.log(distance);
             return { ...hospital, distance };
         }).sort((a, b) => a.distance - b.distance);
+        console.log("sortedData", sortedData)
 
-        const result = sortedData.filter((hospital) =>
-            serviceResult.services.every((service) => hospital.services.includes(service))
+        const result1 = sortedData.filter((hospital) =>
+            serviceResult.services.some((service) => hospital.services.includes(service))
         );
+        console.log("result1", result1)
 
-        console.log(result);
-        setSearchResults(result);
+        const origin = new window.google.maps.LatLng(latitude, longitude);
+        const destinations = result1.map((hospital) => new window.google.maps.LatLng(hospital.Latitude, hospital.Longitude)).slice(0, 7)
+        console.log("destinations", destinations)
+
+        const request = {
+            origins: [origin],
+            destinations: destinations,
+            travelMode: 'DRIVING', // Change travel mode as per your requirement
+        };
+
+        service.getDistanceMatrix(request, (response, status) => {
+            if (status === 'OK') {
+                const result = result1.slice(0, 7).map((hospital, index) => {
+                    const distance = response.rows[0].elements[index]?.distance.value / 1000; // Distance in kilometers
+                    const duration = response.rows[0].elements[index]?.duration.text; // Duration in seconds
+
+                    return { ...hospital, distance, duration };
+                }).sort((a, b) => a.distance - b.distance);
+
+                const filteredResult = result.filter((hospital) =>
+                    serviceResult.services.some((service) => hospital.services.includes(service))
+                );
+
+                console.log(filteredResult);
+                setSearchResults(filteredResult);
+            } else {
+                console.log('Error calculating distances:', status);
+            }
+        });
     };
 
     const quickSearchHandler = (search) => {
@@ -124,16 +155,16 @@ const Search = () => {
                         <button className='bg-pink-400 hover:bg-pink-500 text-white font-bold py-2 px-4 rounded-3xl mt-4 ml-10 max-sm:mx-auto text-lg' onClick={() => quickSearchHandler('Pregnancy')} role='button'>
                             Pregnancy
                         </button>
-                        <button className='bg-pink-400 hover:bg-pink-500 text-white font-bold py-2 px-4 rounded-3xl mt-4 ml-10 max-sm:mx-auto text-lg' onClick={() => searchHandler('Accident')} role='button'>
+                        <button className='bg-pink-400 hover:bg-pink-500 text-white font-bold py-2 px-4 rounded-3xl mt-4 ml-10 max-sm:mx-auto text-lg' onClick={() => quickSearchHandler('Accident')} role='button'>
                             Accident
                         </button>
-                        <button className='bg-pink-400 hover:bg-pink-500 text-white font-bold py-2 px-4 rounded-3xl mt-4 ml-10 max-sm:mx-auto text-lg' onClick={() => searchHandler('Heart Attack')} role='button'>
+                        <button className='bg-pink-400 hover:bg-pink-500 text-white font-bold py-2 px-4 rounded-3xl mt-4 ml-10 max-sm:mx-auto text-lg' onClick={() => quickSearchHandler('Heart Attack')} role='button'>
                             Heart Attack
                         </button>
-                        <button className='bg-pink-400 hover:bg-pink-500 text-white font-bold py-2 px-4 rounded-3xl mt-4 ml-10 max-sm:mx-auto text-lg' onClick={() => searchHandler('Burns and Scalds')} role='button'>
+                        <button className='bg-pink-400 hover:bg-pink-500 text-white font-bold py-2 px-4 rounded-3xl mt-4 ml-10 max-sm:mx-auto text-lg' onClick={() => quickSearchHandler('Burns and Scalds')} role='button'>
                             Burns and Scalds
                         </button>
-                        <button className='bg-pink-400 hover:bg-pink-500 text-white font-bold py-2 px-4 rounded-3xl mt-4 ml-10 max-sm:mx-auto text-lg' onClick={() => searchHandler('Poisoning')} role='button'>
+                        <button className='bg-pink-400 hover:bg-pink-500 text-white font-bold py-2 px-4 rounded-3xl mt-4 ml-10 max-sm:mx-auto text-lg' onClick={() => quickSearchHandler('Poisoning')} role='button'>
                             Poisoning
                         </button>
 
@@ -150,15 +181,18 @@ const Search = () => {
                             <span className='text-gray-500'> Near You</span>
                         </h2>
                         <div className='flex flex-wrap justify-center items-center mt-10 h-fit w-3/5 max-sm:w-4/5'>
-                            {searchResults.slice(0, 7).map((hospital, index) => {
+                            {searchResults.map((hospital, index) => {
                                 return (
                                     <Link key={index} className='bg-white shadow-md rounded-lg overflow-hidden w-2/3 m-4 h-fit p-2 max-sm:w-full ' role='button'
                                         to={{
                                             pathname: `/search/${hospital.Latitude}/${hospital.Longitude}`,
                                         }}>
-                                        <div className='px-4 py-2'>
+                                        <div className='flex justify-between px-4 py-2'>
                                             <h1 className='text-xl font-bold text-gray-800'>{hospital.Name}</h1>
-                                            <p className='text-gray-600 text-sm'>{`${+hospital.distance.toFixed(2)} km`}</p>
+                                            <div className='flex items-end flex-col'>
+                                                <p className='text-gray-600 text-sm'>{`${+hospital.distance.toFixed(2)} km`}</p>
+                                                <p className='text-gray-600 text-sm'>{`${hospital.duration}`}</p>
+                                            </div>
                                             {/* <p className='text-gray-600 text-sm'>{hospital.phone}</p> */}
                                         </div>
                                         {/* <div className='px-4 py-2'>
