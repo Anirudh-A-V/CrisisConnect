@@ -6,6 +6,7 @@ import Navbar from '../Components/Navbar.jsx';
 import Footer from '../Components/Footer.jsx';
 
 const libraries = ['visualization'];
+console.log("In FullMap.jsx")
 
 const FullMap = () => {
   const mapRef = useRef();
@@ -21,6 +22,8 @@ const FullMap = () => {
 
   const { lat, lon } = useParams();
 
+  console.log(lat, lon)
+
   // const lat = 10.615562115554166;
   // const lon = 76.70390366819362;
 
@@ -32,7 +35,7 @@ const FullMap = () => {
   const onLoad = useCallback((map) => (mapRef.current = map), []);
 
   const center = useMemo(() => ({ lat: latitude, lng: longitude }), [latitude, longitude]);
-  const hospital = useMemo(() => ({ lat: lat, lng: lon }), [lat, lon]);
+  const hospital = useMemo(() => ({ lat: Number(lat), lng: Number(lon) }), [lat, lon]);
   const options = useMemo(() => ({ disableDefaultUI: false }), []);
 
   useEffect(() => {

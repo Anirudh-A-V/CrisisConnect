@@ -15,7 +15,6 @@ function App() {
         <Route path="/search" element={<Search />} />
         <Route path="/emergency" element={<Map crisis={true} />} />
         <Route path="/search/:lat/:lon" element={<FullMap />} />
-        <Route path="/full-map" element={<FullMap />} />
         <Route path="/*" element={<h1>404 Not Found</h1>} />
       </Routes>
     </BrowserRouter>
