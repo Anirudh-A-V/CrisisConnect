@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import Navbar from '../Components/Navbar';
-import { useLoadScript } from '@react-google-maps/api';
+import Navbar from '../Components/Navbar';;
 import * as turf from '@turf/turf';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -15,10 +14,6 @@ const Search = () => {
     const [searchResults, setSearchResults] = useState([]);
     const [longitude, setLongitude] = useState(null);
     const [latitude, setLatitude] = useState(null);
-
-    const { isLoaded, loadError } = useLoadScript({
-        googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY
-    });
 
     const navigate = useNavigate();
 
@@ -73,13 +68,16 @@ const Search = () => {
             console.log(distance);
             return { ...hospital, distance };
         }).sort((a, b) => a.distance - b.distance);
+        console.log("sortedData", sortedData)
 
         const result1 = sortedData.filter((hospital) =>
-            serviceResult.services.every((service) => hospital.services.includes(service))
+            serviceResult.services.some((service) => hospital.services.includes(service))
         );
+        console.log("result1", result1)
 
         const origin = new window.google.maps.LatLng(latitude, longitude);
         const destinations = result1.map((hospital) => new window.google.maps.LatLng(hospital.Latitude, hospital.Longitude)).slice(0, 7)
+        console.log("destinations", destinations)
 
         const request = {
             origins: [origin],
@@ -97,7 +95,7 @@ const Search = () => {
                 }).sort((a, b) => a.distance - b.distance);
 
                 const filteredResult = result.filter((hospital) =>
-                    serviceResult.services.every((service) => hospital.services.includes(service))
+                    serviceResult.services.some((service) => hospital.services.includes(service))
                 );
 
                 console.log(filteredResult);
@@ -157,16 +155,16 @@ const Search = () => {
                         <button className='bg-pink-400 hover:bg-pink-500 text-white font-bold py-2 px-4 rounded-3xl mt-4 ml-10 max-sm:mx-auto text-lg' onClick={() => quickSearchHandler('Pregnancy')} role='button'>
                             Pregnancy
                         </button>
-                        <button className='bg-pink-400 hover:bg-pink-500 text-white font-bold py-2 px-4 rounded-3xl mt-4 ml-10 max-sm:mx-auto text-lg' onClick={() => searchHandler('Accident')} role='button'>
+                        <button className='bg-pink-400 hover:bg-pink-500 text-white font-bold py-2 px-4 rounded-3xl mt-4 ml-10 max-sm:mx-auto text-lg' onClick={() => quickSearchHandler('Accident')} role='button'>
                             Accident
                         </button>
-                        <button className='bg-pink-400 hover:bg-pink-500 text-white font-bold py-2 px-4 rounded-3xl mt-4 ml-10 max-sm:mx-auto text-lg' onClick={() => searchHandler('Heart Attack')} role='button'>
+                        <button className='bg-pink-400 hover:bg-pink-500 text-white font-bold py-2 px-4 rounded-3xl mt-4 ml-10 max-sm:mx-auto text-lg' onClick={() => quickSearchHandler('Heart Attack')} role='button'>
                             Heart Attack
                         </button>
-                        <button className='bg-pink-400 hover:bg-pink-500 text-white font-bold py-2 px-4 rounded-3xl mt-4 ml-10 max-sm:mx-auto text-lg' onClick={() => searchHandler('Burns and Scalds')} role='button'>
+                        <button className='bg-pink-400 hover:bg-pink-500 text-white font-bold py-2 px-4 rounded-3xl mt-4 ml-10 max-sm:mx-auto text-lg' onClick={() => quickSearchHandler('Burns and Scalds')} role='button'>
                             Burns and Scalds
                         </button>
-                        <button className='bg-pink-400 hover:bg-pink-500 text-white font-bold py-2 px-4 rounded-3xl mt-4 ml-10 max-sm:mx-auto text-lg' onClick={() => searchHandler('Poisoning')} role='button'>
+                        <button className='bg-pink-400 hover:bg-pink-500 text-white font-bold py-2 px-4 rounded-3xl mt-4 ml-10 max-sm:mx-auto text-lg' onClick={() => quickSearchHandler('Poisoning')} role='button'>
                             Poisoning
                         </button>
 

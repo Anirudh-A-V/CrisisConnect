@@ -1,8 +1,9 @@
-import { useState, useRef, useEffect, useMemo, useCallback } from 'react';
+import { useState, useRef, useEffect, useMemo, useCallback, useContext } from 'react';
 import { GoogleMap, useLoadScript, Marker, LoadScript, DirectionsService, DirectionsRenderer } from '@react-google-maps/api';
 
 import Navbar from '../Components/Navbar.jsx';
 import Footer from '../Components/Footer.jsx';
+import { GoogleMapsContext } from '../App.jsx';
 
 const libraries = ['places'];
 
@@ -21,10 +22,12 @@ function Map({ crisis }) {
     const [eta, setETA] = useState('');
     const [mapLoaded, setMapLoaded] = useState(false);
 
-    const { isLoaded, loadError } = useLoadScript({
-        googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
-        libraries: libraries,
-    });
+    // const { isLoaded, loadError } = useLoadScript({
+    //     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
+    //     libraries: libraries,
+    // });
+
+    const { isLoaded, loadError } = useContext(GoogleMapsContext);
 
     const onLoad = useCallback((map) => {
         mapRef.current = map;
