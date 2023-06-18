@@ -68,12 +68,13 @@ function Map({ crisis }) {
 
         const service = new window.google.maps.places.PlacesService(mapRef.current);
 
-        console.log('Fetching hospitals...');
+        console.log(`Fetching ${crisis ? 'emergency ' : ''}hospitals...`);
 
         const request = {
             location: new window.google.maps.LatLng(latitude, longitude),
             radius: 5000, // Search within a radius of 10km
             type: 'hospital',
+            keyword: crisis ? 'emergency' : undefined,
         };
 
         service.nearbySearch(request, (results, status) => {
@@ -217,7 +218,7 @@ function Map({ crisis }) {
                                         )}
                                     </>
                                 )}
-                                {distance > 0 && eta !== '' && (
+                                {directions && (
                                     <div className="distance">
                                         <p>Distance: <b>{distance}</b></p>
                                         <p>ETA: <b>{eta}</b></p>
