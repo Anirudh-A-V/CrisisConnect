@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import Navbar from '../Components/Navbar';
+import { useLoadScript } from '@react-google-maps/api';
 import * as turf from '@turf/turf';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -14,6 +15,10 @@ const Search = () => {
     const [searchResults, setSearchResults] = useState([]);
     const [longitude, setLongitude] = useState(null);
     const [latitude, setLatitude] = useState(null);
+
+    const { isLoaded, loadError } = useLoadScript({
+        googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY
+    });
 
     const navigate = useNavigate();
 
@@ -58,6 +63,8 @@ const Search = () => {
         setServices(serviceResult);
         console.log(serviceResult);
 
+        const service = new window.google.maps.DistanceMatrixService();
+
         const sortedData = Location.map((hospital) => {
             const from = turf.point([latitude, longitude]);
             const to = turf.point([hospital.Latitude, hospital.Longitude]);
@@ -67,12 +74,38 @@ const Search = () => {
             return { ...hospital, distance };
         }).sort((a, b) => a.distance - b.distance);
 
-        const result = sortedData.filter((hospital) =>
+        const result1 = sortedData.filter((hospital) =>
             serviceResult.services.every((service) => hospital.services.includes(service))
         );
 
-        console.log(result);
-        setSearchResults(result);
+        const origin = new window.google.maps.LatLng(latitude, longitude);
+        const destinations = result1.map((hospital) => new window.google.maps.LatLng(hospital.Latitude, hospital.Longitude)).slice(0, 7)
+
+        const request = {
+            origins: [origin],
+            destinations: destinations,
+            travelMode: 'DRIVING', // Change travel mode as per your requirement
+        };
+
+        service.getDistanceMatrix(request, (response, status) => {
+            if (status === 'OK') {
+                const result = result1.slice(0, 7).map((hospital, index) => {
+                    const distance = response.rows[0].elements[index]?.distance.value / 1000; // Distance in kilometers
+                    const duration = response.rows[0].elements[index]?.duration.text; // Duration in seconds
+
+                    return { ...hospital, distance, duration };
+                }).sort((a, b) => a.distance - b.distance);
+
+                const filteredResult = result.filter((hospital) =>
+                    serviceResult.services.every((service) => hospital.services.includes(service))
+                );
+
+                console.log(filteredResult);
+                setSearchResults(filteredResult);
+            } else {
+                console.log('Error calculating distances:', status);
+            }
+        });
     };
 
     const quickSearchHandler = (search) => {
@@ -150,15 +183,18 @@ const Search = () => {
                             <span className='text-gray-500'> Near You</span>
                         </h2>
                         <div className='flex flex-wrap justify-center items-center mt-10 h-fit w-3/5 max-sm:w-4/5'>
-                            {searchResults.slice(0, 7).map((hospital, index) => {
+                            {searchResults.map((hospital, index) => {
                                 return (
                                     <Link key={index} className='bg-white shadow-md rounded-lg overflow-hidden w-2/3 m-4 h-fit p-2 max-sm:w-full ' role='button'
                                         to={{
                                             pathname: `/search/${hospital.Latitude}/${hospital.Longitude}`,
                                         }}>
-                                        <div className='px-4 py-2'>
+                                        <div className='flex justify-between px-4 py-2'>
                                             <h1 className='text-xl font-bold text-gray-800'>{hospital.Name}</h1>
-                                            <p className='text-gray-600 text-sm'>{`${+hospital.distance.toFixed(2)} km`}</p>
+                                            <div className='flex items-end flex-col'>
+                                                <p className='text-gray-600 text-sm'>{`${+hospital.distance.toFixed(2)} km`}</p>
+                                                <p className='text-gray-600 text-sm'>{`${hospital.duration}`}</p>
+                                            </div>
                                             {/* <p className='text-gray-600 text-sm'>{hospital.phone}</p> */}
                                         </div>
                                         {/* <div className='px-4 py-2'>
