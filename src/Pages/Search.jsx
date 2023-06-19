@@ -32,6 +32,7 @@ const Search = () => {
         };
 
         const error = () => {
+            alert('Enable location services to use this feature')
             console.log('Unable to retrieve your location');
         };
 
