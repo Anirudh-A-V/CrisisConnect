@@ -1,11 +1,12 @@
 import { useState, useRef, useEffect, useMemo, useCallback, useContext } from 'react';
-import { GoogleMap, useLoadScript, Marker, LoadScript, DirectionsService, DirectionsRenderer } from '@react-google-maps/api';
+import { GoogleMap, Marker, DirectionsService, DirectionsRenderer } from '@react-google-maps/api';
 
 import Navbar from '../Components/Navbar.jsx';
 import Footer from '../Components/Footer.jsx';
 import { GoogleMapsContext } from '../App.jsx';
+import Location from '../Data/location.js';
 
-const libraries = ['places'];
+const emergency = ["Thiruvananthapuram Medical College", "KIMS Hospital", "Cosmopolitan Hospital", "GG Hospital", "Sree Uthradom Thirunal (SUT) Hospital", "Credence Hospital", "Ananthapuri Hospitals and Research Institute (AHRI)"];
 
 function Map({ crisis }) {
     const [hospitals, setHospitals] = useState([]);
@@ -44,6 +45,7 @@ function Map({ crisis }) {
         };
 
         const error = () => {
+            alert('Enable location services to use this feature')
             console.log('Unable to retrieve your location');
         };
 
@@ -70,62 +72,99 @@ function Map({ crisis }) {
         }
 
         const service = new window.google.maps.places.PlacesService(mapRef.current);
+        const distanceService = new window.google.maps.DistanceMatrixService();
 
         console.log(`Fetching ${crisis ? 'emergency ' : ''}hospitals...`);
 
-        const request = {
-            location: new window.google.maps.LatLng(latitude, longitude),
-            radius: 5000, // Search within a radius of 10km
-            type: 'hospital',
-            keyword: crisis ? 'emergency' : undefined,
-        };
+        if (crisis) {
+            const hospitals = Location.filter((hospital) => emergency.includes(hospital.Name));
+            console.log("Hospitals", hospitals)
+            const origin = new window.google.maps.LatLng(latitude, longitude);
+            const destinations = hospitals.map((hospital) => new window.google.maps.LatLng(hospital.Latitude, hospital.Longitude))
 
-        service.nearbySearch(request, (results, status) => {
-            if (status === window.google.maps.places.PlacesServiceStatus.OK) {
-                // Prepare requests for distance calculation
-                const distanceRequests = results.map((hospital) => ({
-                    origin: new window.google.maps.LatLng(latitude, longitude),
-                    destination: hospital.geometry.location,
-                    travelMode: 'DRIVING',
-                }));
+            const request = {
+                origins: [origin],
+                destinations: destinations,
+                travelMode: 'DRIVING', // Change travel mode as per your requirement
+            };
 
-                // Calculate distances using the Distance Matrix service
-                const distanceService = new window.google.maps.DistanceMatrixService();
-                distanceService.getDistanceMatrix(
-                    {
-                        origins: [new window.google.maps.LatLng(latitude, longitude)],
-                        destinations: distanceRequests.map((request) => request.destination),
+            distanceService.getDistanceMatrix(request, (response, status) => {
+                if (status === 'OK') {
+                    const result = hospitals.map((hospital, index) => {
+                        const distance = response.rows[0].elements[index]?.distance?.text; // Distance in kilometers
+                        const duration = response.rows[0].elements[index]?.duration?.text; // Duration in seconds
+
+                        return {
+                            name: hospital.Name,
+                            latitude: hospital.Latitude,
+                            longitude: hospital.Longitude,
+                            distance,
+                            duration
+                        };
+                    }).sort((a, b) => a.distance - b.distance);
+
+                    setHospitals(result);
+                    console.log("Hospitals", result)
+  
+                } else {
+                    console.log('Error calculating emergency hospital distances:', status);
+                }
+            })
+
+        } else {
+            const request = {
+                location: new window.google.maps.LatLng(latitude, longitude),
+                radius: 5000, // Search within a radius of 10km
+                type: 'hospital',
+            };
+
+            service.nearbySearch(request, (results, status) => {
+                if (status === window.google.maps.places.PlacesServiceStatus.OK) {
+                    // Prepare requests for distance calculation
+                    const distanceRequests = results.map((hospital) => ({
+                        origin: new window.google.maps.LatLng(latitude, longitude),
+                        destination: hospital.geometry.location,
                         travelMode: 'DRIVING',
-                    },
-                    (response, status) => {
-                        if (status === 'OK') {
-                            const { rows } = response;
-                            const sortedHospitals = results
-                                .map((hospital, index) => ({
-                                    id: hospital.place_id,
-                                    name: hospital.name,
-                                    latitude: hospital.geometry.location.lat(),
-                                    longitude: hospital.geometry.location.lng(),
-                                    distance: rows[0].elements[index]?.distance.text,
-                                    duration: rows[0].elements[index]?.duration.text,
-                                }))
-                                .sort((a, b) => {
-                                    // Sort by distance
-                                    const distanceA = parseFloat(a.distance);
-                                    const distanceB = parseFloat(b.distance);
-                                    return distanceA - distanceB;
-                                }).slice(0, 7);
+                    }));
 
-                            setHospitals(sortedHospitals);
-                        } else {
-                            console.log('Error calculating distances:', status);
+                    // Calculate distances using the Distance Matrix service
+                    const distanceService = new window.google.maps.DistanceMatrixService();
+                    distanceService.getDistanceMatrix(
+                        {
+                            origins: [new window.google.maps.LatLng(latitude, longitude)],
+                            destinations: distanceRequests.map((request) => request.destination),
+                            travelMode: 'DRIVING',
+                        },
+                        (response, status) => {
+                            if (status === 'OK') {
+                                const { rows } = response;
+                                const sortedHospitals = results
+                                    .map((hospital, index) => ({
+                                        id: hospital.place_id,
+                                        name: hospital.name,
+                                        latitude: hospital.geometry.location.lat(),
+                                        longitude: hospital.geometry.location.lng(),
+                                        distance: rows[0].elements[index]?.distance.text,
+                                        duration: rows[0].elements[index]?.duration.text,
+                                    }))
+                                    .sort((a, b) => {
+                                        // Sort by distance
+                                        const distanceA = parseFloat(a.distance);
+                                        const distanceB = parseFloat(b.distance);
+                                        return distanceA - distanceB;
+                                    }).slice(0, 7);
+
+                                setHospitals(sortedHospitals);
+                            } else {
+                                console.log('Error calculating distances:', status);
+                            }
                         }
-                    }
-                );
-            } else {
-                console.log('Error loading nearby places:', status);
-            }
-        });
+                    );
+                } else {
+                    console.log('Error loading nearby places:', status);
+                }
+            });
+        }
     }, [isLoaded, loadError, latitude, longitude, mapLoaded]);
 
     useEffect(() => {
@@ -187,10 +226,10 @@ function Map({ crisis }) {
                                             visible={true}
                                             opacity={1}
                                         />
-                                        {hospitals.length > 0 && hospitals.map((hospital) => (
+                                        {hospitals.length > 0 && hospitals.map((hospital, index) => (
                                             <Marker
-                                                key={hospital.id}
-                                                position={{ lat: hospital.latitude, lng: hospital.longitude }}
+                                                key={index}
+                                                position={{ lat: Number(hospital.latitude), lng: Number(hospital.longitude) }}
                                                 cursor="pointer"
                                                 onClick={() => {
                                                     console.log('Marker clicked:', hospital)
@@ -236,9 +275,9 @@ function Map({ crisis }) {
                 <section className='Hospital-List'>
                     <h1 className='text-2xl font-bold text-center mt-10'>Hospitals</h1>
                     <div className='flex flex-col justify-center items-center'>
-                        {hospitals.map((hospital) => (
+                        {hospitals.map((hospital, index) => (
                             <div
-                                key={hospital.id}
+                                key={index}
                                 onClick={() => {
                                     console.log('Hospital clicked:', hospital)
                                     setSelectedHospital(hospital);
