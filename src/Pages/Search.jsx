@@ -61,49 +61,63 @@ const Search = () => {
 
         const service = new window.google.maps.DistanceMatrixService();
 
-        const sortedData = Location.map((hospital) => {
-            const from = turf.point([latitude, longitude]);
-            const to = turf.point([hospital.Latitude, hospital.Longitude]);
-            const options = { units: 'kilometers' };
-            const distance = turf.distance(from, to, options);
-            console.log(distance);
-            return { ...hospital, distance };
-        }).sort((a, b) => a.distance - b.distance);
-        console.log("sortedData", sortedData)
-
-        const result1 = sortedData.filter((hospital) =>
-            serviceResult.services.some((service) => hospital.services.includes(service))
+        const filterResult = Location.filter((hospital) =>
+            serviceResult.services.every((service) => hospital.services.includes(service))
         );
-        console.log("result1", result1)
+
+        console.log("Filter :", filterResult);
+        setSearchResults(filterResult);
 
         const origin = new window.google.maps.LatLng(latitude, longitude);
-        const destinations = result1.map((hospital) => new window.google.maps.LatLng(hospital.Latitude, hospital.Longitude)).slice(0, 7)
-        console.log("destinations", destinations)
+        const destinations = filterResult.map((hospital) => new window.google.maps.LatLng(hospital.Latitude, hospital.Longitude));
 
-        const request = {
-            origins: [origin],
-            destinations: destinations,
-            travelMode: 'DRIVING', // Change travel mode as per your requirement
-        };
+        const batchSize = 7; // Number of destinations per batch
+        const batches = [];
 
-        service.getDistanceMatrix(request, (response, status) => {
-            if (status === 'OK') {
-                const result = result1.slice(0, 7).map((hospital, index) => {
-                    const distance = response.rows[0].elements[index]?.distance.value / 1000; // Distance in kilometers
-                    const duration = response.rows[0].elements[index]?.duration.text; // Duration in seconds
+        for (let i = 0; i < destinations.length; i += batchSize) {
+            const batch = destinations.slice(i, i + batchSize);
+            batches.push(batch);
+        }
 
-                    return { ...hospital, distance, duration };
-                }).sort((a, b) => a.distance - b.distance);
+        // Create an array to hold the promises for each batch request
+        const promises = [];
 
-                const filteredResult = result.filter((hospital) =>
-                    serviceResult.services.some((service) => hospital.services.includes(service))
-                );
+        // Process each batch of destinations
+        batches.forEach((batch, batchIndex) => {
+            const request = {
+                origins: [origin],
+                destinations: batch,
+                travelMode: 'DRIVING', // Change travel mode as per your requirement
+            };
 
-                console.log(filteredResult);
-                setSearchResults(filteredResult);
-            } else {
-                console.log('Error calculating distances:', status);
-            }
+            // Create a promise for each batch request
+            const promise = new Promise((resolve) => {
+                service.getDistanceMatrix(request, (response, status) => {
+                    if (status === 'OK') {
+                        const result = batch.map((destination, index) => {
+                            const distance = response.rows[0].elements[index]?.distance.text // Distance in kilometers
+                            const duration = response.rows[0].elements[index]?.duration.text; // Duration in seconds
+
+                            return { ...filterResult[batchIndex * batchSize + index], distance, duration };
+                        });
+
+                        resolve(result);
+                    } else {
+                        console.log('Error calculating distances:', status);
+                        resolve([]);
+                    }
+                });
+            });
+
+            promises.push(promise);
+        });
+
+        // Wait for all promises to resolve
+        Promise.all(promises).then((results) => {
+            // Concatenate the results of all batches into a single array
+            const searchResults = results.flat();
+
+            setSearchResults(searchResults);
         });
     };
 
@@ -190,8 +204,8 @@ const Search = () => {
                                         }}>
                                         <div className='flex justify-between px-4 py-2'>
                                             <h1 className='text-xl font-bold text-gray-800'>{hospital.Name}</h1>
-                                            <div className='flex items-end flex-col'>
-                                                <p className='text-gray-600 text-sm'>{`${+hospital.distance.toFixed(2)} km`}</p>
+                                            <div className='flex items-end flex-col w-[50px]'>
+                                                <p className='text-gray-600 text-sm'>{`${hospital.distance}`}</p>
                                                 <p className='text-gray-600 text-sm'>{`${hospital.duration}`}</p>
                                             </div>
                                             {/* <p className='text-gray-600 text-sm'>{hospital.phone}</p> */}
